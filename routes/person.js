@@ -1,5 +1,4 @@
 var express = require('express');
-var router = express.Router();
 var jwt = require('jsonwebtoken');
 
 var DB_CONN_STR = 'mongodb://localhost:27017/dailycss';
@@ -15,7 +14,7 @@ var countComment = require('../tools/db').countComment;
 var someDailyCss = require('../tools/db').someDailyCss;
 var selectSomeDailyCss = require('../tools/db').selectSomeDailyCss;
 
-
+var router = express.Router();
 
 router.get('/memo', function(req, res, next){
 	MongoClient.connect(DB_CONN_STR, function(err, db){
@@ -111,8 +110,8 @@ router.get('/personaldetail', function(req, res, next){
 	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
 		if(err){
 			res.json({
-				code: 403,
-				msg: "authorized fail"
+				code: 70010,
+				msg: "Invalid token"
 			});
 		} else {
 			mdb.findUser(decoded.username, function(err, result){
@@ -145,13 +144,13 @@ router.get('/personaldetail', function(req, res, next){
 	});
 });
 
-//更改个人信息
+//更改个人博客
 router.post('/updateblog', function(req, res, next){
 	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
 		if(err){
 			res.json({
-				code: 403,
-				msg: "authorized fail"
+				code: 70010,
+				msg: "Invalid token"
 			});
 		} else {
 			var blog = {

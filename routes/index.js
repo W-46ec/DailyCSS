@@ -6,14 +6,12 @@ var sha256 = require('sha256');
 var mdb = require('../tools/db.js');
 var auth = require('../tools/auth.js');
 var mail = require('../tools/mail.js');
-var register = [];
-
 
 var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 
-
+var register = [];
 
 router.get('/',function(req, res, next){
 	

@@ -10,18 +10,12 @@ var router = express.Router();
 
 var uploadFolder = './public/upload/';
 
-//上传头像测试页面
-router.get('/upload.html', function(req, res, next){
-	res.header('Content-Type', "text/html");
-	res.render('upload');
-});
-
 //上传头像
 router.post('/upload', function(req, res, next){
 	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
 		if(err){
 			res.json({
-				code: 403,
+				code: 80010,
 				msg: 'Invalid token'
 			});
 			return;
@@ -35,7 +29,6 @@ router.post('/upload', function(req, res, next){
 					var fileFormat = (file.originalname).split(".");
 					cb(
 						null, 
-						//req.body.username + //temp
 						decoded.username + 
 						"." + 
 						fileFormat[fileFormat.length - 1]
@@ -74,7 +67,7 @@ router.post('/upload', function(req, res, next){
 			upload(req, res, function(err){
 				if(err){
 					res.json({
-						code: 80010,
+						code: 80011,
 						msg: 'failed'
 					});
 				} else {
@@ -88,9 +81,9 @@ router.post('/upload', function(req, res, next){
 	});
 });
 
-//获取头像URL列表
+//获取头像URL列表（部分）
 router.post('/getfiles', function(req, res, next){
-	var ret = req.body.username.map(e => {
+	var ret = req.body.usernames.map(e => {
 		if(fs.existsSync(path.join('./public/upload', e + ".jpg"))){
 			return path.join('./public/upload', e + ".jpg");
 		} else if(fs.existsSync(path.join('./public/upload', e + ".png"))){
@@ -101,20 +94,9 @@ router.post('/getfiles', function(req, res, next){
 	});
 	res.json({
 		code: 200,
-		data: ret
+		data: ret,
+		msg: "files"
 	});
-
-	//想很久才想出来，不舍得删
-	// ret.map(e => {
-	// 	return fs.existsSync(e);
-	// }).some(e => e === false) ? res.json({
-	// 	code: 500,
-	// 	msg: "文件不存在"
-	// }) : res.json({
-	// 	code: 200,
-	// 	data: ret,
-	// 	msg: "success"
-	// })
 });
 
 //获取全部用户的头像URL列表（备用）

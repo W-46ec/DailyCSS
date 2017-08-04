@@ -8,8 +8,6 @@ var mail = require('../tools/mail.js');
 var register = [];
 var router = express.Router();
 
-
-
 /* Register listing. */
 
 //点击注册按钮
