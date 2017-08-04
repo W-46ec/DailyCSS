@@ -254,10 +254,12 @@ var delectFavorite = function(db, username, id, cb){
 }   //删除收藏
 
 
-var selectMemo = function(db, cb){
+var selectMemo = function(db, username, cb){
     collection = db.collection('reminder');
 
-    collection.find().toArray(function(err, result){
+    var whereStr = {"username":username};
+
+    collection.find(whereStr).toArray(function(err, result){
         if(err)
         {
         console.log('Error:'+ err);

@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
 var uuid = require('uuid');
+var auth = require('../tools/auth.js');
+
 
 var DB_CONN_STR = 'mongodb://localhost:27017/dailycss';
 var MongoClient = require('mongodb').MongoClient;
@@ -15,7 +17,7 @@ var delectFavorite = require('../tools/db').delectFavorite;
 
 router.post('/submit', function(req, res, next){
 	// var username = req.body.username;
-	var username = req.verify(req.headers["auth"], key).username;
+	var username = req.verify(req.headers["auth"], auth.key).username;
 	var content = req.body.dailycss.replace(/(\n|\r\n)/g,"<br />");
 	var date = new Date().toLocaleString();
 	var id = uuid();
@@ -43,7 +45,7 @@ router.post('/submit', function(req, res, next){
 router.get('/collect', function(req, res, next){
 	var id = req.query.id;
 	// var username = "honor";
-	var username = jwt.verify(req.headers["auth"], key);
+	var username = jwt.verify(req.headers["auth"], auth.key);
 	var checkData = {
 		id:id,
 		username:username
@@ -82,7 +84,7 @@ router.get('/collect', function(req, res, next){
 
 
 router.get('/delete',function(req, res, next){
-	var username = jwt.verify(req.headers["auth"], key);
+	var username = jwt.verify(req.headers["auth"], auth.key);
 	// var username = 'honor';
 	var id = req.query.id;
 

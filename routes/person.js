@@ -17,8 +17,15 @@ var selectSomeDailyCss = require('../tools/db').selectSomeDailyCss;
 var router = express.Router();
 
 router.get('/memo', function(req, res, next){
+
+	if ("username" in req.query){
+		var username = req.query.username
+	} else {
+		var username = jwt.verify(req.headers["auth"], auth.key)
+	}
+
 	MongoClient.connect(DB_CONN_STR, function(err, db){
-		selectMemo(db, function(result){
+		selectMemo(db, username, function(result){
 			res.json({
 				code:200,
 				data:result,
@@ -35,7 +42,7 @@ router.post('/memo', function(req, res, next){
 	var id = req.body.id;
 	var time = req.body.time;
 	var thing = req.body.thing.replace(/(\n|\r\n)/g,"<br />");
-	var username = jwt.verify(req.headers["auth"], key);
+	var username = jwt.verify(req.headers["auth"], auth.key);
 	// var username = 'honor';
 
 	var data = {
@@ -56,7 +63,7 @@ router.post('/memo', function(req, res, next){
 
 
 router.get('/display', function(req, res, next){
-	var author = jwt.verify(req.headers["auth"], key);
+	var author = jwt.verify(req.headers["auth"], auth.key);
 	// var author = "zxc110";
 
 	MongoClient.connect(DB_CONN_STR, function(err, db){

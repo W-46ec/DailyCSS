@@ -19,7 +19,7 @@ router.get('/',function(req, res, next){
 		var username = ' ';
 		
 	} else {
-		var username = jwt.verify(req.headers["auth"], key);
+		var username = jwt.verify(req.headers["auth"], auth.key);
 		
 	}
 
@@ -37,7 +37,7 @@ router.get('/',function(req, res, next){
 						code:200,
 						favorite:result,
 						dailyCss:data[a],
-						msg:'Insert Succeed'
+						msg:'"Welcome!'
 					});
 					db.close();
 				})
