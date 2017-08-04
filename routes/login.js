@@ -40,16 +40,11 @@ router.post('/login', function(req, res, next) {
 							onLine[i].iat = +(new Date());
 						}
 					}
-					console.log("onLine:\n");	//test
-					console.log(onLine);	//test
 				} else {
 					onLine.push({
 						username: req.body.username,
 						iat: +(new Date())
 					});
-					console.log("push");	//test
-					console.log("onLine:\n");	//test
-					console.log(onLine);	//test
 				}
 
 				res.json({
@@ -92,26 +87,16 @@ router.get('/*', function(req, res, next) {
 							onLine[i].iat = +(new Date());
 						}
 					}
-					console.log("onLine:\n");	//test
-					console.log(onLine);	//test
 				} else {
 					onLine.push({
 						username: decoded.username,
 						iat: +(new Date())
 					});
-					console.log("push");	//test
-					console.log("onLine:\n");	//test
-					console.log(onLine);	//test
 				}
 				next();
 			}
 		});
 	}
-});
-
-//登陆测试路由
-router.get('/', function(req, res, next) {
-	res.render('index', { title: 'Express' });
 });
 
 //注销
@@ -128,8 +113,6 @@ router.get('/logout', function(req, res, next) {
 					e.iat = 0;
 				}
 			});
-			console.log("logout:\n\n");	//test
-			console.log(onLine);	//test
 			res.json({
 				code: 200,
 				msg: "logout"
@@ -138,7 +121,7 @@ router.get('/logout', function(req, res, next) {
 	});
 });
 
-//获取个人信息
+// //获取个人信息  0
 router.get('/personaldetail', function(req, res, next){
 	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
 		if(err){
@@ -177,7 +160,7 @@ router.get('/personaldetail', function(req, res, next){
 	});
 });
 
-//更改个人信息
+//更改个人信息  0
 router.post('/updateblog', function(req, res, next){
 	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
 		if(err){

@@ -11,6 +11,9 @@ var login = require('./routes/login');
 var register = require('./routes/register');
 var lost = require('./routes/lost');
 var files = require('./routes/files');
+var comment = require('./routes/comment');
+var person = require('./routes/person');
+var dailycss = require('./routes/dailycss');
 
 var app = express();
 
@@ -39,11 +42,14 @@ app.use('*', function(req, res, next){
 }); 
 
 app.use('/', index);
-app.use('/users', users);
-app.use('/login', login);
-app.use('/register', register);
 app.use('/lost', lost);
-app.use('/files', files);
+app.use('/user', login);
+app.use('/user/files', files);
+app.use('/user/comment', comment);
+app.use('/user/person', person);
+app.use('/user/dailycss', dailycss);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

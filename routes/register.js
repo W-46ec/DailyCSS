@@ -5,10 +5,10 @@ var jwt = require('jsonwebtoken');
 var mdb = require('../tools/db.js');
 var auth = require('../tools/auth.js');
 var mail = require('../tools/mail.js');
-
+var register = [];
 var router = express.Router();
 
-var register = [];
+
 
 /* Register listing. */
 
@@ -52,20 +52,17 @@ router.post('/register', function(req, res, next) {
 				});
 			} else {
 				register.push(registerInfo);
-				console.log(register);	//test
 				var regToken = auth.registerToken(registerInfo);
-				var href = "http://127.0.0.1:3000/register/register?Token=" + regToken;
+				var href = "http://127.0.0.1:3000/register?Token=" + regToken;
 				var a = "<a href=\"" + href + "\">" + href + "</a>";
 				var msg = "<p>请于10分钟内完成验证</p><br>" + a;
 				mail.sendEmail(registerInfo.email, msg, function(err, info){
 					if(err) {
-						//console.log(err);	//test
 						res.json({
 							code: 500,
 							msg: 'Error'
 						});
 					} else {
-						//console.log(info);	//test
 						res.json({
 							code: 200,
 							msg: 'sent successfully'
@@ -112,7 +109,6 @@ router.get('/register', function(req, res, next){
 									return;
 								}
 								register.splice(i,1);
-								console.log(register);	//test
 								var rToken = auth.token(decoded.username);
 								res.setHeader("auth", rToken);
 								res.json({

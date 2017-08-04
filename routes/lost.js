@@ -44,12 +44,8 @@ router.post('/verifyuser', function(req, res, next){
 							verificationCode[j].date = verification.date;
 						}
 					}
-					console.log("update:\n");	//test
-					console.log(verificationCode);	//test
 				} else {
 					verificationCode.push(verification);
-					console.log("push:\n");	//test
-					console.log(verificationCode);	//test
 				}
 				res.json({
 					code: 200,
@@ -105,8 +101,6 @@ router.post('/verifycode', function(req, res, next){
 			j-=1;
 		}
 	}
-	// console.log("verificationCode:\n\n");	//test
-	// console.log(verificationCode);	//test
 	if(verificationCode.some(e => e.username === req.body.username)){
 		for(var i = 0; i < verificationCode.length; i++){
 			if(verificationCode[i].username === req.body.username){
@@ -116,8 +110,6 @@ router.post('/verifycode', function(req, res, next){
 						username: verificationCode[i].username
 					});
 					verificationCode.splice(i,1);
-					// console.log("verificationCode:\n\n");	//test
-					// console.log(verificationCode);	//test
 					res.setHeader("auth", token);
 					res.json({
 						code: 200,
@@ -171,7 +163,6 @@ router.post('/updatepwd', function(req, res, next){
 								msg: "Error"
 							});
 						} else {
-							//console.log(result.result.nModified);	//test
 							res.json({
 								code: 200,
 								msg: "重置成功"
