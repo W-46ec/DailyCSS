@@ -11,6 +11,56 @@
 
 ### 首页
 
+<br/>
+
+#### 登陆
+
+接口名称：/
+
+接口类型：POST
+
+是否需要Token：否
+
+示例URL：http://127.0.0.1:3000
+
+<br/>
+
+**无请求参数列表**
+
+
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number|
+|favorite|收藏的dailyCss||
+|dailyCss|随机显示的dailyCss|
+|msg|消息|string||
+
+
+<br/>
+**响应示例**
+```json
+	{
+		"code":200,
+		"favorite":[],		
+		"dailyCss": {
+        "_id": "5982940f00d6960df4180b6a",
+        "username": "zxc110",
+        "content": "早上下雨",
+        "date": "2017-08-03 11:10:07",
+        "id": "d70174a8-ece5-45eb-9f62-80a7853941dc"
+    }
+		"msg":"Welcome!"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|登陆成功|Welcome!|
+
 
 ### 登陆模块
 
@@ -367,9 +417,336 @@
 
 ### Daily CSS模块
 
+<br/>
+#### 添加dailyCss
+接口名称：/user/dailycss
+
+接口类型：POST
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/daiilcss/submit
+
+<br/>
+**参数列表**
+|参数|含义|类型|备注|
+|---|
+|dailycss|dailycss内容|string||
+
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "msg": "Insert Succeed"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|Insert Succeed|
+
+#### 收藏dailyCss
+接口名称：/user/dailycss
+
+接口类型：GET
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/dailycss/collect?id=xxx
+
+<br/>
+**参数列表**
+|参数|含义|类型|备注|
+|---|
+|id|连接dailycss|string||
+
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "msg": "收藏成功"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|收藏成功|
+|403|收藏失败|已收藏过该dailyCss|
+
+#### 删除dailyCss
+接口名称：/user/dailycss
+
+接口类型：GET
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/dailycss/delete?id=xxx
+
+<br/>
+**参数列表**
+|参数|含义|类型|备注|
+|---|
+|id|连接dailycss|string||
+
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "msg": "删除收藏成功"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|删除收藏成功|
+
+
 ### 评论模块
+<br/>
+#### 添加评论
+接口名称：/user/comment
+
+接口类型：POST
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/comment?id=xxx
+
+<br/>
+**参数列表**
+|参数|含义|类型|备注|
+|---|
+|comment|评论内容|string||
+|id|连接DailyCss|string|
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "msg": "Comment Succeed"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|Comment Succeed|
+
+#### 查看评论
+接口名称：/user/comment
+
+接口类型：GET
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/comment?id=xxx
+
+<br/>
+**参数列表**
+|参数|含义|类型|备注|
+|---|
+|id|连接DailyCss|string|
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|data|评论内容|string
+|dailyCss|被评论内容|string
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "data":[{
+		    "_id": "5982c9e1b73b0d36b43943dc",
+		    "id": "d70174a8-ece5-45eb-9f62-80a7853941dc",
+            "commentator": "honor",
+            "comment": "花菜是菜花",
+            "date": "2017-08-03 14:59:45",
+            "author": "zxc110",
+            "status": "1"
+	    },
+	    ……],
+	    "dailyCss": {
+        "_id": "5982940f00d6960df4180b6a",
+        "username": "zxc110",
+        "content": "早上下雨",
+        "date": "2017-08-03 11:10:07",
+        "id": "d70174a8-ece5-45eb-9f62-80a7853941dc"
+    },
+	    "msg": "Comment Succeed"
+	}
+```
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|Comment Succeed|
+
+#### 未查看评论个数
+接口名称：/user/comment
+
+接口类型：GET
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/count
+
+<br/>
+**无请求参数列表**
+
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|data|未查看评论的总数|number|
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "data":3	
+	    "msg": "未查看评论总数"
+	}
+```
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|Comment Succeed|
 
 ### 个人信息模块
+
+#### 查看备忘录
+
+接口名称：/user/person/memo
+
+接口类型：GET
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/person/memo?username=xxx
+
+<br/>
+**无请求参数列表**
+
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|data|数据|object||
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "data": [
+	        {
+            "_id": "598297c8f8c0f220980a5f79",
+            "id": "5",
+            "username": "honor",
+            "time": "周四",
+            "thing": "睡觉"
+        }],
+	    "msg": "成功查看备忘录"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|成功查看备忘录|
+
+#### 修改备忘录
+
+接口名称：/user/person/memo
+
+接口类型：POST
+
+是否需要Token：是
+
+示例URL：http://127.0.0.1:3000/user/person/memo?username=xxx
+
+<br/>
+**请求参数列表**
+|参数|含义|类型|备注|
+|---|
+|id|第几条便签|number||
+|time|时间|string||
+|thing|做什么|string||
+<br/>
+**响应参数列表**
+|参数|含义|类型|备注|
+|---|
+|code|状态值|number||
+|data|数据|object||
+|msg|消息|string||
+
+<br/>
+**响应示例**
+```json
+	{
+	    "code": 200,
+	    "data": [
+				"code":200,
+				"msg":"成功更新备忘录"
+        }],
+	    "msg": "成功更新备忘录"
+	}
+```
+
+<br/>
+**状态码详细定义**
+|状态码|含义|消息|
+|---|
+|200|请求成功|成功更新备忘录|
+
 
 <br/>
 #### 获取个人资料
