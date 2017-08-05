@@ -61,8 +61,47 @@ router.post('/login', function(req, res, next) {
 	});
 });
 
-//登陆检测 & 在线统计
+//登陆过滤 & 在线统计 （GET）
 router.get('/*', function(req, res, next) {
+	if(req.headers["auth"] === undefined){
+			res.json({
+			code: 40016,
+			msg: "未登录或Token过期"
+		});
+	} else {
+		jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
+			if(err){
+				res.json({
+					code: 40016,
+					msg: "未登录或Token过期"
+				});
+			} else {
+				//暂时不用每次请求都更换Token
+				//var newHead = auth.token(decoded.username);
+				//res.setHeader("auth", newHead);
+				res.setHeader("auth", req.headers["auth"]);
+				if(onLine.some(e => {
+					return e.username === decoded.username;
+				})){
+					for(var i = 0; i < onLine.length; i++){
+						if(onLine[i].username === decoded.username){
+							onLine[i].iat = +(new Date());
+						}
+					}
+				} else {
+					onLine.push({
+						username: decoded.username,
+						iat: +(new Date())
+					});
+				}
+				next();
+			}
+		});
+	}
+});
+
+//登陆过滤 & 在线统计 （POST）
+router.post('/*', function(req, res, next) {
 	if(req.headers["auth"] === undefined){
 			res.json({
 			code: 40016,
