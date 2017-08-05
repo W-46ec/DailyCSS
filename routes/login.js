@@ -10,8 +10,6 @@ var router = express.Router();
 
 var onLine = [];
 
-/* Login listing. */
-
 //登陆操作
 router.post('/login', function(req, res, next) {
 	mdb.findUser(req.body.username, function(err, result){
@@ -48,7 +46,8 @@ router.post('/login', function(req, res, next) {
 				}
 
 				res.json({
-					code: 200, 
+					code: 200,
+					username: req.body.username,
 					auth: head,
 					msg: 'Welcome!'
 				});
@@ -62,7 +61,7 @@ router.post('/login', function(req, res, next) {
 	});
 });
 
-//登陆检测 & 在线统计
+//登陆过滤 & 在线统计 （GET）
 router.get('/*', function(req, res, next) {
 	if(req.headers["auth"] === undefined){
 			res.json({
@@ -77,8 +76,49 @@ router.get('/*', function(req, res, next) {
 					msg: "未登录或Token过期"
 				});
 			} else {
-				var newHead = auth.token(decoded.username);
-				res.setHeader("auth", newHead);
+				//暂时不用每次请求都更换Token
+				//var newHead = auth.token(decoded.username);
+				//res.setHeader("auth", newHead);
+				res.setHeader("auth", req.headers["auth"]);
+				if(onLine.some(e => {
+					return e.username === decoded.username;
+				})){
+					for(var i = 0; i < onLine.length; i++){
+						if(onLine[i].username === decoded.username){
+							onLine[i].iat = +(new Date());
+						}
+					}
+				} else {
+					onLine.push({
+						username: decoded.username,
+						iat: +(new Date())
+					});
+				}
+				next();
+			}
+		});
+	}
+});
+
+//登陆过滤 & 在线统计 （POST）
+router.post('/*', function(req, res, next) {
+	if(req.headers["auth"] === undefined){
+			res.json({
+			code: 40016,
+			msg: "未登录或Token过期"
+		});
+	} else {
+		jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
+			if(err){
+				res.json({
+					code: 40016,
+					msg: "未登录或Token过期"
+				});
+			} else {
+				//暂时不用每次请求都更换Token
+				//var newHead = auth.token(decoded.username);
+				//res.setHeader("auth", newHead);
+				res.setHeader("auth", req.headers["auth"]);
 				if(onLine.some(e => {
 					return e.username === decoded.username;
 				})){
@@ -121,19 +161,56 @@ router.get('/logout', function(req, res, next) {
 	});
 });
 
-
 //获取在线人数
 router.get('/getonline', function(req, res, next){
-	var ret = onLine.filter(e => {
-		if(e.iat + 300 * 1000 > +(new Date())){
-			return e;
+	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
+		if(err){
+			res.json({
+				code: 40016,
+				msg: "未登录或Token过期"
+			});
+		} else {
+			mdb.findAllUser(function(err, result){
+				var number = 0;
+				var list = result.map(e => {
+					let s = 1;
+					for(var i = 0; i < onLine.length; i++){
+						if(e.username === onLine[i].username){
+							s = 0;
+							if(onLine[i].iat + 300 * 1000 > +(new Date())){
+								onLine[i].status = 1;
+								number++;
+								return onLine[i];
+							} else {
+								onLine[i].status = 0;
+								return onLine[i];
+							}
+						} 
+					}
+					if(s){
+						return {
+							username: e.username,
+							iat: 0,
+							status: 0
+						}
+					}
+				}).sort(function(a, b){
+					return b.iat - a.iat;
+				});
+				for(var j = 0; j < list.length; j++){
+					if(list.username === decoded.username){
+						list.unshift(list.splice(j, 1));
+						break;
+					}
+				}
+				res.json({
+					code: 200,
+					data: list,
+					number: number,
+					msg: '在线人数'
+				});
+			});
 		}
-	});
-	res.json({
-		code: 200,
-		data: ret,
-		number: ret.length,
-		msg: '在线人数'
 	});
 });
 

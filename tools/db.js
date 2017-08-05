@@ -7,6 +7,16 @@ var DB_CONN_STR = 'mongodb://127.0.0.1:27017/dailycss';
 var tbUser = 'users';
 var tbReminder = 'reminder';
 
+//获取所有用户
+var findAllUser = function(callback){
+    mongoClient.connect(DB_CONN_STR, function(err, db){
+        var collection = db.collection(tbUser);
+        collection.find().toArray(function(err, result){
+            callback(err, result);
+        });
+    });
+}
+
 //查找用户
 var findUser = function(username, callback){
 	mongoClient.connect(DB_CONN_STR,function(err,db){
@@ -348,6 +358,7 @@ var seeOther = function(db, username, cb){
 
 
 module.exports = {
+    findAllUser: findAllUser,
 	findUser: findUser,
 	addUser: addUser,
 	addReminder: addReminder,
