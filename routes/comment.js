@@ -17,14 +17,9 @@ var countComment = require('../tools/db').countComment;
 
 
 router.post('/add',function(req, res, next){
-	console.log("here");
 	var id = req.query.id;
-	console.log(id);
-	
 	var comment = req.body.comment.replace(/(\n|\r\n)/g,"<br />");
-	console.log(comment);
 	var commentator = jwt.verify(req.headers["auth"], auth.key).username;
-	console.log(commentator);
 	
 	var date = new Date().toLocaleString();
  

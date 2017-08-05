@@ -32,7 +32,6 @@ router.get('/',function(req, res, next){
 	MongoClient.connect(DB_CONN_STR, function(err, db) {
 		selectCount(db, function(count) {
 			var a = Math.round(Math.random()*(count - 1) + 0);
-			console.log(a);
 			selectAllDailyCss(db, function(data){
 				selectFavorite(db, checkdata, function(result){
 					res.json({

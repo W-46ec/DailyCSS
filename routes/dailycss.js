@@ -45,8 +45,6 @@ router.get('/collect', function(req, res, next){
 	var id = req.query.id;
 	var username = jwt.verify(req.headers["auth"], auth.key).username;
 
-	console.log(id);
-	console.log(username);
 	var checkData = {
 		id:id,
 		username:username
@@ -54,7 +52,6 @@ router.get('/collect', function(req, res, next){
 
 	MongoClient.connect(DB_CONN_STR, function(err, db){
 		selectOneDailyCss(db, id, function(result){
-			console.log(result);
 			var content = result[0].content;
 			var author = result[0].username;
 			var data = {
@@ -87,8 +84,6 @@ router.get('/collect', function(req, res, next){
 router.get('/delete',function(req, res, next){
 	var username = jwt.verify(req.headers["auth"], auth.key).username;
 	var id = req.query.id;
-	console.log(username);
-	console.log(id)
 	MongoClient.connect(DB_CONN_STR, function(err, db) {
 		delectFavorite(db, username, id, function(result) {
 			res.json({

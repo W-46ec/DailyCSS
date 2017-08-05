@@ -65,10 +65,8 @@ router.post('/memo', function(req, res, next){
 
 router.get('/display', function(req, res, next){
 	var author = jwt.verify(req.headers["auth"], auth.key).username;
-	console.log(auth);
 	var id = req.query.button;
 	if (("username" in req.query && !(req.query.username === author)) || id === '0'){
-		console.log("here")
 		if(!id){
 			var author = req.query.username;
 		};
