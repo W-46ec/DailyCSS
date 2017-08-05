@@ -125,7 +125,7 @@ router.get('/register', function(req, res, next){
 				});
 			} else {
 				for(var i = 0; i < register.length; i++){
-					if(register[i].username === decoded.username ||
+					if(register[i].username === decoded.username &&
 						decoded.status === 1){
 						mdb.addUser(register[i], function(err, result){
 							if(err){
