@@ -329,8 +329,20 @@ var selectSomeDailyCss = function(db, num, ID, author, cb){
         cb(result);
     });
 
-}   //查询一看评论的DailyCss
+}   //查询已看评论的DailyCss
 
+var seeOther = function(db, username, cb){
+    var collection = db.collection("dailyCss");
+
+    var whereStr = {"username":username};
+    collection.find(whereStr).toArray(function(err, result){
+        if(err){
+            console.log('Error' + err);
+            return;
+        }
+        cb(result);
+    });
+}   //查看他人资料
 
 
 
@@ -347,6 +359,7 @@ module.exports = {
     selectAllDailyCss:selectAllDailyCss,
     someDailyCss:someDailyCss,
     selectCount:selectCount,
+    seeOther:seeOther,
 
     insertComment:insertComment,
     selectComment:selectComment,

@@ -13,6 +13,7 @@ var updateMemo = require('../tools/db').updateMemo;
 var countComment = require('../tools/db').countComment;
 var someDailyCss = require('../tools/db').someDailyCss;
 var selectSomeDailyCss = require('../tools/db').selectSomeDailyCss;
+var seeOther = require('../tools/db').seeOther;
 
 var router = express.Router();
 
@@ -21,7 +22,7 @@ router.get('/memo', function(req, res, next){
 	if ("username" in req.query){
 		var username = req.query.username
 	} else {
-		var username = jwt.verify(req.headers["auth"], auth.key)
+		var username = jwt.verify(req.headers["auth"], auth.key).username;
 	}
 
 	MongoClient.connect(DB_CONN_STR, function(err, db){
@@ -42,7 +43,7 @@ router.post('/memo', function(req, res, next){
 	var id = req.body.id;
 	var time = req.body.time;
 	var thing = req.body.thing.replace(/(\n|\r\n)/g,"<br />");
-	var username = jwt.verify(req.headers["auth"], auth.key);
+	var username = jwt.verify(req.headers["auth"], auth.key).username;
 	// var username = 'honor';
 
 	var data = {
@@ -63,53 +64,66 @@ router.post('/memo', function(req, res, next){
 
 
 router.get('/display', function(req, res, next){
-	var author = jwt.verify(req.headers["auth"], auth.key);
-	// var author = "zxc110";
-
-	MongoClient.connect(DB_CONN_STR, function(err, db){
-		countComment(db, author, function(result){
-			var idArray = [];
-			var ID = [];
-			var i, sum = 0 ;
-			for(i = 0; i < result.length; i++){
-				if( result[i].status === "1" ){
-					idArray.push({"id":result[i].id});
-					ID.push(result[i].id);
-				}
-			}
-
-			ID = ID.reduce((acc, cur) => {
-				if(!acc.includes(cur))	acc.push(cur);
-				return acc;
-			},[])
-			// idArray = idArray.reduce((acc, cur) => {
-			// 	if(!acc.includes(cur))	acc.push(cur);
-			// 	return acc;
-			// },[])
-
-			sum = ID.length;
-			someDailyCss(db, idArray, function(result){
-				if(sum > 6){
-					res.json({
+	var author = jwt.verify(req.headers["auth"], auth.key).username;
+	console.log(auth);
+	var id = req.query.button;
+	if (("username" in req.query && !(req.query.username === author)) || id === '0'){
+		console.log("here")
+		if(!id){
+			var author = req.query.username;
+		};
+		MongoClient.connect(DB_CONN_STR, function(err, db){
+			seeOther(db, author, function(result){
+				result = result.reverse();
+				res.json({
 					code:200,
 					data:result,
-					msg:'未查看评论的DailyCss超过6条'
-					});
-				}else {
-					selectSomeDailyCss(db, sum, ID, author, function(end){
-						end = end.reverse();
+					msg:'查看他人资料'
+				});
+			});
+		})
+	} else {
+		MongoClient.connect(DB_CONN_STR, function(err, db){
+			countComment(db, author, function(result){
+				var idArray = [];
+				var ID = [];
+				var i, sum = 0 ;
+				for(i = 0; i < result.length; i++){
+					if( result[i].status === "1" ){
+						idArray.push({"id":result[i].id});
+						ID.push(result[i].id);
+					}
+				}
+
+				ID = ID.reduce((acc, cur) => {
+					if(!acc.includes(cur))	acc.push(cur);
+					return acc;
+				},[]);
+
+				sum = ID.length;
+				someDailyCss(db, idArray, function(result){
+					if(sum > 6){
 						res.json({
-							code:200,
-							data:result,
-							last:end,
-							msg:'未查看评论的DailyCss未超过6条'
+						code:200,
+						data:result,
+						msg:'未查看评论的DailyCss超过6条'
 						});
-					});
-				};
+					}else {
+						selectSomeDailyCss(db, sum, ID, author, function(end){
+							end = end.reverse();
+							res.json({
+								code:200,
+								data:result,
+								last:end,
+								msg:'未查看评论的DailyCss未超过6条'
+							});
+						});
+					};
+				});
 			});
 		});
-	});
-})		//一些展示神奇的东西
+	}
+})		//一些展示神奇的东西 0
 
 
 //获取个人信息

@@ -16,8 +16,7 @@ var delectFavorite = require('../tools/db').delectFavorite;
 
 
 router.post('/submit', function(req, res, next){
-	// var username = req.body.username;
-	var username = req.verify(req.headers["auth"], auth.key).username;
+	var username = jwt.verify(req.headers["auth"], auth.key).username;
 	var content = req.body.dailycss.replace(/(\n|\r\n)/g,"<br />");
 	var date = new Date().toLocaleString();
 	var id = uuid();
@@ -39,13 +38,15 @@ router.post('/submit', function(req, res, next){
 		db.close();
      });
   }) 
-})		//添加dailyCss
+})		//添加dailyCss 
 
 
 router.get('/collect', function(req, res, next){
 	var id = req.query.id;
-	// var username = "honor";
-	var username = jwt.verify(req.headers["auth"], auth.key);
+	var username = jwt.verify(req.headers["auth"], auth.key).username;
+
+	console.log(id);
+	console.log(username);
 	var checkData = {
 		id:id,
 		username:username
@@ -84,10 +85,10 @@ router.get('/collect', function(req, res, next){
 
 
 router.get('/delete',function(req, res, next){
-	var username = jwt.verify(req.headers["auth"], auth.key);
-	// var username = 'honor';
+	var username = jwt.verify(req.headers["auth"], auth.key).username;
 	var id = req.query.id;
-
+	console.log(username);
+	console.log(id)
 	MongoClient.connect(DB_CONN_STR, function(err, db) {
 		delectFavorite(db, username, id, function(result) {
 			res.json({

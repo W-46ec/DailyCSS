@@ -7,6 +7,8 @@ var mdb = require('../tools/db.js');
 var auth = require('../tools/auth.js');
 var mail = require('../tools/mail.js');
 
+var DB_CONN_STR = 'mongodb://localhost:27017/dailycss';
+var MongoClient = require('mongodb').MongoClient;
 var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
@@ -19,7 +21,7 @@ router.get('/',function(req, res, next){
 		var username = ' ';
 		
 	} else {
-		var username = jwt.verify(req.headers["auth"], auth.key);
+		var username = jwt.verify(req.headers["auth"], auth.key).username;
 		
 	}
 
@@ -30,14 +32,14 @@ router.get('/',function(req, res, next){
 	MongoClient.connect(DB_CONN_STR, function(err, db) {
 		selectCount(db, function(count) {
 			var a = Math.round(Math.random()*(count - 1) + 0);
-			
+			console.log(a);
 			selectAllDailyCss(db, function(data){
 				selectFavorite(db, checkdata, function(result){
 					res.json({
 						code:200,
 						favorite:result,
 						dailyCss:data[a],
-						msg:'"Welcome!'
+						msg:'Welcome!'
 					});
 					db.close();
 				})

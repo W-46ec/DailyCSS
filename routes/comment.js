@@ -16,11 +16,16 @@ var countComment = require('../tools/db').countComment;
 
 
 
-router.post('/',function(req, res, next){
+router.post('/add',function(req, res, next){
+	console.log("here");
 	var id = req.query.id;
+	console.log(id);
+	
 	var comment = req.body.comment.replace(/(\n|\r\n)/g,"<br />");
-	var commentator = jwt.verify(res.headers["auth"], auth.key).username;
-	// var commentator = req.body.username;
+	console.log(comment);
+	var commentator = jwt.verify(req.headers["auth"], auth.key).username;
+	console.log(commentator);
+	
 	var date = new Date().toLocaleString();
  
 	MongoClient.connect(DB_CONN_STR, function(err, db) {
@@ -50,14 +55,13 @@ router.post('/',function(req, res, next){
 
 router.get('/', function(req, res, next){
 	var id = req.query.id;
-	var username = jwt.verify(req.headers["auth"], auth.key);
+	var username = jwt.verify(req.headers["auth"], auth.key).username;
 	// var username = "lin"; 
 
 	MongoClient.connect(DB_CONN_STR, function(err, db){
 		selectOneDailyCss(db, id, function(b){
 			var author = b[0].username;
 			if(username ===author){
-				console.log("123");
 				updateComment(db, id, username, function(a){
 					selectComment(db, id, function(result){
 						res.json({
@@ -71,7 +75,6 @@ router.get('/', function(req, res, next){
 				});
 			} else {
 				selectComment(db, id, function(result){
-					result = result.reverse();
 					res.json({
 						code:200,
 						data:result,
@@ -87,7 +90,7 @@ router.get('/', function(req, res, next){
  
 
 router.get('/count', function(req, res, next){
-	var username = jwt.verify(req.headers["auth"], auth.key);
+	var author = jwt.verify(req.headers["auth"], auth.key).username;
 	// var author = "zxc110";
 
 	MongoClient.connect(DB_CONN_STR, function(err, db){
