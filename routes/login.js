@@ -133,7 +133,7 @@ router.get('/getonline', function(req, res, next){
 		} else {
 			mdb.findAllUser(function(err, result){
 				var number = 0;
-				var ret = result.map(e => {
+				var list = result.map(e => {
 					let s = 1;
 					for(var i = 0; i < onLine.length; i++){
 						if(e.username === onLine[i].username){
@@ -155,10 +155,18 @@ router.get('/getonline', function(req, res, next){
 							status: 0
 						}
 					}
-				})
+				}).sort(function(a, b){
+					return b.iat - a.iat;
+				});
+				for(var j = 0; j < list.length; j++){
+					if(list.username === decoded.username){
+						list.unshift(list.splice(j, 1));
+						break;
+					}
+				}
 				res.json({
 					code: 200,
-					data: ret,
+					data: list,
 					number: number,
 					msg: '在线人数'
 				});

@@ -346,6 +346,7 @@ var selectSomeDailyCss = function(db, num, ID, author, cb){
 
 
 module.exports = {
+    findAllUser: findAllUser,
 	findUser: findUser,
 	addUser: addUser,
 	addReminder: addReminder,
