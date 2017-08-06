@@ -18,13 +18,11 @@ var urlConfig = 'http://127.0.0.1:3000';
 var register = [];
 
 router.get('/',function(req, res, next){
-	
 	if(req.headers["auth"] === undefined){
 		var username = ' ';
 		
 	} else {
 		var username = jwt.verify(req.headers["auth"], auth.key).username;
-		
 	}
 
 	var checkdata =	{
