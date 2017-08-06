@@ -13,7 +13,7 @@ var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 
-var urlConfig = 'http://127.0.0.1:3000';
+var urlConfig = 'http://192.168.1.107:3000';
 
 var register = [];
 
@@ -97,8 +97,8 @@ router.post('/register', function(req, res, next) {
 				mail.sendEmail(registerInfo.email, msg, function(err, info){
 					if(err) {
 						res.json({
-							code: 500,
-							msg: 'Error'
+							code: 90015,
+							msg: '邮件发送失败'
 						});
 					} else {
 						res.json({
@@ -110,7 +110,7 @@ router.post('/register', function(req, res, next) {
 			}
 		} else {
 			res.json({
-				code: 403,
+				code: 90010,
 				msg: '用户名已存在'
 			});
 		}
