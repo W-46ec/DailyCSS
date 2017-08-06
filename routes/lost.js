@@ -135,13 +135,15 @@ router.post('/verifycode', function(req, res, next){
 
 //重置密码
 router.post('/updatepwd', function(req, res, next){
-	if(req.headers["auth"] === undefined){
+	var reqAuth = req.body.auth;
+	if(reqAuth === undefined){
 			res.json({
 			code: 100015,
 			msg: "无法找到Token"
 		});
 	} else {
-		jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
+		jwt.verify(reqAuth, auth.key, function(err, decoded){
+
 			if(err){
 				res.json({
 					code: 100016,
