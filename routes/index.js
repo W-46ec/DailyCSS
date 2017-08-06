@@ -13,6 +13,8 @@ var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 
+var urlConfig = 'http://127.0.0.1:3000';
+
 var register = [];
 
 router.get('/',function(req, res, next){
@@ -89,7 +91,7 @@ router.post('/register', function(req, res, next) {
 			} else {
 				register.push(registerInfo);
 				var regToken = auth.registerToken(registerInfo);
-				var href = "http://127.0.0.1:3000/register?Token=" + regToken;
+				var href = urlConfig + "/register?Token=" + regToken;
 				var a = "<a href=\"" + href + "\">" + href + "</a>";
 				var msg = "<p>请于10分钟内完成验证</p><br>" + a;
 				mail.sendEmail(registerInfo.email, msg, function(err, info){
