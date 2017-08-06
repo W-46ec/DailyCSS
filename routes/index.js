@@ -120,55 +120,42 @@ router.get('/register', function(req, res, next){
 	if(req.query.Token){
 		jwt.verify(req.query.Token, auth.key, function(err, decoded){
 			if(err){
-				res.json({
-					code: 403,
-					msg: '授权失败'
-				});
+				res.header('Content-Type', "text/html");
+				res.render('msg', {code: 403, msg: '授权失败'});
 			} else {
 				for(var i = 0; i < register.length; i++){
 					if(register[i].username === decoded.username &&
 						decoded.status === 1){
 						mdb.addUser(register[i], function(err, result){
 							if(err){
-								res.json({
-									code: 500,
-									msg: 'Error'
-								});
+								res.header('Content-Type', "text/html");
+								res.render('msg', {code: 500, msg: 'Error'});
 								return;
 							}
 							mdb.addReminder(decoded.username, function(err2, result2){
 								if(err2){
-									res.json({
-										code: 500,
-										msg: 'Error'
-									});
+									res.header('Content-Type', "text/html");
+									res.render('msg', {code: 500, msg: 'Error'});
 									return;
 								}
 								register.splice(i,1);
 								var rToken = auth.token(decoded.username);
 								res.setHeader("auth", rToken);
-								res.json({
-									code: 200,
-									msg: '注册成功'
-								});
+								res.header('Content-Type', "text/html");
+								res.render('msg', {code: 200, msg: '注册成功'});
 							});
 						});
 						return;
 					}
 				}
-				res.json({
-					code: 90014,
-					msg: '授权过期'
-				});
+				res.header('Content-Type', "text/html");
+				res.render('msg', {code: 90014, msg: '授权过期'});
 			}
 		});
 	} else {
-		res.json({
-			code: 403,
-			msg: '参数错误'
-		});
+		res.header('Content-Type', "text/html");
+		res.render('msg', {code: 403, msg: '参数错误'});
 	}
 });
-
 
 module.exports = router;
