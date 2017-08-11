@@ -12,8 +12,6 @@ var router = express.Router();
 var verificationCode = [];
 var lost_SentList = [];
 
-/* Lost listing. */
-
 //验证用户名邮箱 & 生成验证码
 router.post('/verifyuser', function(req, res, next){
 	mdb.findUser(req.body.username, function(err, result){
