@@ -10,8 +10,7 @@ var mail = require('../tools/mail.js');
 var router = express.Router();
 
 var verificationCode = [];
-
-/* Lost listing. */
+var lost_SentList = [];
 
 //验证用户名邮箱 & 生成验证码
 router.post('/verifyuser', function(req, res, next){
@@ -66,23 +65,48 @@ router.post('/sendcode', function(req, res, next){
 	if(verificationCode.some(e => e.username === req.body.username)){
 		for(var i = 0; i < verificationCode.length; i++){
 			if(verificationCode[i].username === req.body.username){
-				var msg = "<p>您的验证码为:" + 
-				verificationCode[i].code + 
-				"。请于10分钟内完成验证</p>";
-				mail.sendEmail(verificationCode[i].email, msg, function(err, info){
-					if(err){
-						res.json({
-							code: 100012,
-							msg: '邮件发送失败'
-						});
-					} else {
-						res.json({
-							code: 200,
-							msg: '发送成功'
-						});
+				for(var j = 0; j < lost_SentList.length; j++){
+					if(lost_SentList[j].date + 60000 < +(new Date())){	//1min
+						lost_SentList.splice(j, 1);
+						j-=1;
 					}
-				});
-				return;
+				}
+				if(lost_SentList.length != 0 &&
+					lost_SentList.some(e => {
+						if(e.email === verificationCode[i].email &&
+							e.date + 60000 > +(new Date())){
+							return true;
+						}
+					})){	//1min
+					res.json({
+						code: 100018,
+						msg: '请于1分钟后再尝试'
+					});
+					return;
+				} else {
+					var lostSent = {
+						email: verificationCode[i].email,
+						date: +(new Date())
+					};
+					lost_SentList.push(lostSent);
+					var msg = "<p>您的验证码为:" + 
+					verificationCode[i].code + 
+					"。请于10分钟内完成验证</p>";
+					mail.sendEmail(verificationCode[i].email, msg, function(err, info){
+						if(err){
+							res.json({
+								code: 100012,
+								msg: '邮件发送失败'
+							});
+						} else {
+							res.json({
+								code: 200,
+								msg: '发送成功'
+							});
+						}
+					});
+					return;
+				}
 			}
 		}
 	} else {
@@ -135,13 +159,15 @@ router.post('/verifycode', function(req, res, next){
 
 //重置密码
 router.post('/updatepwd', function(req, res, next){
-	if(req.headers["auth"] === undefined){
+	var reqAuth = req.body.auth;
+	if(reqAuth === undefined){
 			res.json({
 			code: 100015,
 			msg: "无法找到Token"
 		});
 	} else {
-		jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
+		jwt.verify(reqAuth, auth.key, function(err, decoded){
+
 			if(err){
 				res.json({
 					code: 100016,

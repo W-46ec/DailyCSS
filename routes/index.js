@@ -13,9 +13,10 @@ var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 
-var urlConfig = 'http://192.168.1.107:3000';
+var urlConfig = 'http://192.168.0.105:3000';
 
 var register = [];
+var sentList = [];
 
 router.get('/',function(req, res, next){
 	if(req.headers["auth"] === undefined){
@@ -81,6 +82,12 @@ router.post('/register', function(req, res, next) {
 					i-=1;
 				}
 			}
+			for(var j = 0; j < sentList.length; j++){
+				if(sentList[j].date + 120000 < +(new Date())){	//2min
+					sentList.splice(j, 1);
+					j-=1;
+				}
+			}
 			if(Object.keys(registerInfo).some(e => registerInfo[e] === '' ||
 				registerInfo.pwd != registerInfo.reconfirmpwd)){
 				res.json({
@@ -88,24 +95,42 @@ router.post('/register', function(req, res, next) {
 					msg: '参数错误'
 				});
 			} else {
-				register.push(registerInfo);
-				var regToken = auth.registerToken(registerInfo);
-				var href = urlConfig + "/register?Token=" + regToken;
-				var a = "<a href=\"" + href + "\">" + href + "</a>";
-				var msg = "<p>请于10分钟内完成验证</p><br>" + a;
-				mail.sendEmail(registerInfo.email, msg, function(err, info){
-					if(err) {
-						res.json({
-							code: 90015,
-							msg: '邮件发送失败'
-						});
-					} else {
-						res.json({
-							code: 200,
-							msg: 'sent successfully'
-						});
-					}
-				});
+				if(sentList.length != 0 &&
+					sentList.some(e => {
+						if(e.email === registerInfo.email &&
+							e.date + 120000 > +(new Date())){
+							return true;
+						}
+					})){	//2min
+					res.json({
+						code: 90016,
+						msg: '请于2分钟后再尝试'
+					});
+				} else {
+					register.push(registerInfo);
+					var sent = {
+						email: registerInfo.email,
+						date: +(new Date())
+					};
+					sentList.push(sent);
+					var regToken = auth.registerToken(registerInfo);
+					var href = urlConfig + "/register?Token=" + regToken;
+					var a = "<a href=\"" + href + "\">" + href + "</a>";
+					var msg = "<p>请于10分钟内完成验证</p><br>" + a;
+					mail.sendEmail(registerInfo.email, msg, function(err, info){
+						if(err) {
+							res.json({
+								code: 90015,
+								msg: '邮件发送失败'
+							});
+						} else {
+							res.json({
+								code: 200,
+								msg: 'sent successfully'
+							});
+						}
+					});
+				}
 			}
 		} else {
 			res.json({
