@@ -24,7 +24,7 @@ router.get('/',function(req, res, next){
 	} else {
 		var username = jwt.verify(req.headers["auth"], auth.key).username;
 	}
-
+	console.log(username);
 	var checkdata =	{
 		username
 	};
@@ -40,6 +40,7 @@ router.get('/',function(req, res, next){
 						dailyCss:data[a],
 						msg:'Welcome!'
 					});
+					console.log(result);
 					db.close();
 				})
 			})
