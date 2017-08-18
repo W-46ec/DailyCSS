@@ -1,5 +1,6 @@
 var sha256 = require('sha256');
 var uuid = require('uuid');
+var crypto = require('crypto');
 
 var mongoClient = require('mongodb').MongoClient;
 var DB_CONN_STR = 'mongodb://127.0.0.1:27017/dailycss';
@@ -9,12 +10,12 @@ var tbReminder = 'reminder';
 
 //获取所有用户
 var findAllUser = function(callback){
-    mongoClient.connect(DB_CONN_STR, function(err, db){
-        var collection = db.collection(tbUser);
-        collection.find().toArray(function(err, result){
-            callback(err, result);
-        });
-    });
+	mongoClient.connect(DB_CONN_STR, function(err, db){
+		var collection = db.collection(tbUser);
+		collection.find().toArray(function(err, result){
+			callback(err, result);
+		});
+	});
 }
 
 //查找用户
@@ -34,7 +35,14 @@ var addUser = function(query, callback){
 		var collection = db.collection(tbUser);
 		var username = query.username;
 		var salt = sha256(uuid.v4());
-		var pwd = sha256(query.pwd + salt);
+		//HMACSHA256方式加盐
+		var pwd = crypto.pbkdf2Sync(
+			query.pwd,
+			salt,
+			4096,	//迭代次数
+			256,	//生成密码长度
+			'sha256'
+		).toString('hex');
 		var blog = query.blog;
 		var email = query.email;
 		var date = new Date().toLocaleString();
@@ -95,71 +103,71 @@ var updatePersonalDetail = function(username, update, callback){
 
 
 var insertDailyCss = function(db, data, cb){  
-    var collection = db.collection('dailyCss');
+	var collection = db.collection('dailyCss');
 
-    collection.insert(data, function(err, result){
-        if(err){
-            console.log('Error'+err);
-            return;
-        }
-        cb(result);
-    })
+	collection.insert(data, function(err, result){
+		if(err){
+			console.log('Error'+err);
+			return;
+		}
+		cb(result);
+	})
 };  //新增DailyCss
 
 
 var selectOneDailyCss = function(db, id, cb){
-    var collection = db.collection('dailyCss');
-    var whereStr = {"id":id};
+	var collection = db.collection('dailyCss');
+	var whereStr = {"id":id};
 
-    collection.find(whereStr).toArray(function(err, result) {
-        if(err)
-        {
-        console.log('Error:'+ err);
-        return;
-        }     
-        cb(result);
-    });
+	collection.find(whereStr).toArray(function(err, result) {
+		if(err)
+		{
+		console.log('Error:'+ err);
+		return;
+		}     
+		cb(result);
+	});
 };   //查询OneDailyCss
 
 
 var selectCount = function(db, cb){
-    var collection = db.collection('dailyCss');
-    
-    collection.find().count(function(err, result) {
-        if(err)
-        {
-        console.log('Error:'+ err);
-        return;
-        }     
-        cb(result);
-    });
+	var collection = db.collection('dailyCss');
+	
+	collection.find().count(function(err, result) {
+		if(err)
+		{
+		console.log('Error:'+ err);
+		return;
+		}     
+		cb(result);
+	});
 };  //查询DailyCss总数
 
 
 var selectAllDailyCss = function(db, cb){
-    var collection = db.collection('dailyCss');
+	var collection = db.collection('dailyCss');
 
-    var whereStr = {"username":{$gte:""}};
-    collection.find(whereStr).toArray(function(err, result) {
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    });
+	var whereStr = {"username":{$gte:""}};
+	collection.find(whereStr).toArray(function(err, result) {
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	});
 }   //查询AllDailyCss
 
 
 var insertComment = function(db, data, cb){
-    var collection = db.collection('comment');
+	var collection = db.collection('comment');
 
-    collection.insert(data, function(err, result){
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    })
+	collection.insert(data, function(err, result){
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	})
 };  //新增评论
 
 
@@ -167,16 +175,16 @@ var selectComment = function(db, id, cb) {
   var collection = db.collection('comment');
   
   var whereStr = {
-      id:id
-    };
+	  id:id
+	};
 
   collection.find(whereStr).toArray(function(err, result) {
-    if(err)
-    {
-      console.log('Error:'+ err);
-      return;
-    }     
-    cb(result);
+	if(err)
+	{
+	  console.log('Error:'+ err);
+	  return;
+	}     
+	cb(result);
   });
 };  //查询评论
 
@@ -185,205 +193,205 @@ var countComment = function(db, author, cb) {
   var collection = db.collection('comment');
   
   var whereStr = {
-      author:author
-    };
+	  author:author
+	};
 
   collection.find(whereStr).toArray(function(err, result) {
-    if(err)
-    {
-      console.log('Error:'+ err);
-      return;
-    }     
-    cb(result);
+	if(err)
+	{
+	  console.log('Error:'+ err);
+	  return;
+	}     
+	cb(result);
   });
 };  //统计评论 
 
 
 var updateComment = function(db, id, username, cb){
-    var collection = db.collection('comment');
+	var collection = db.collection('comment');
 
-    var whereStr = {
-        "id":id,
-        "author":username
-    };
-    var updateStr = {$set: {"status": "0"}};
+	var whereStr = {
+		"id":id,
+		"author":username
+	};
+	var updateStr = {$set: {"status": "0"}};
 
-    collection.update(whereStr, updateStr, {
-        multi: true
-    }, function(err, result) {
-        if(err){
-        console.log('Error:'+ err);
-        return;
-        }
-        console.log(result)
-        cb(result);
-    });
+	collection.update(whereStr, updateStr, {
+		multi: true
+	}, function(err, result) {
+		if(err){
+		console.log('Error:'+ err);
+		return;
+		}
+		console.log(result)
+		cb(result);
+	});
 }   //更新评论
 
 
 var insertFavorite = function(db, data, cb){
-    var collection = db.collection('usersFavorite')
+	var collection = db.collection('usersFavorite')
 
-    collection.insert(data, function(err, result){
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    })
+	collection.insert(data, function(err, result){
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	})
 };  //新增收藏
 
 
 var selectFavorite = function(db, data, cb){
-    var collection = db.collection('usersFavorite');
+	var collection = db.collection('usersFavorite');
 
-    var whereStr = data;
-    collection.find(whereStr).toArray(function(err, result){
-        if(err)
-        {
-        console.log('Error:'+ err);
-        return;
-        }     
-        cb(result);
-    });
+	var whereStr = data;
+	collection.find(whereStr).toArray(function(err, result){
+		if(err)
+		{
+		console.log('Error:'+ err);
+		return;
+		}     
+		cb(result);
+	});
 }   //查询收藏
 
 
 var delectFavorite = function(db, username, id, cb){
-    var collection = db.collection('usersFavorite');
+	var collection = db.collection('usersFavorite');
 
-    var whereStr = {"username":username, "id":id};
+	var whereStr = {"username":username, "id":id};
 
-    collection.remove(whereStr, function(err, result){
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    })
+	collection.remove(whereStr, function(err, result){
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	})
 }   //删除收藏
 
 
 var selectMemo = function(db, username, cb){
-    collection = db.collection('reminder');
+	collection = db.collection('reminder');
 
-    var whereStr = {"username":username};
+	var whereStr = {"username":username};
 
-    collection.find(whereStr).toArray(function(err, result){
-        if(err)
-        {
-        console.log('Error:'+ err);
-        return;
-        }     
-        cb(result);
-    });
+	collection.find(whereStr).toArray(function(err, result){
+		if(err)
+		{
+		console.log('Error:'+ err);
+		return;
+		}     
+		cb(result);
+	});
 
 
 }   //查询备忘录
 
 
 var insertMemo = function(db, data, cb){
-    var collection = db.collection('reminder')
+	var collection = db.collection('reminder')
 
-    collection.insert(data, function(err, result){
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    })
+	collection.insert(data, function(err, result){
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	})
 
 }   //测试
 
 
 var updateMemo = function(db, id, username, data, cb){
-    var collection = db.collection('reminder');
+	var collection = db.collection('reminder');
 
-    var whereStr = {"id":id, "username":username};
-    var updateStr = {$set: data};
+	var whereStr = {"id":id, "username":username};
+	var updateStr = {$set: data};
 
-    collection.update(whereStr, updateStr, function(err, result) {
-        if(err){
-        console.log('Error:'+ err);
-        return;
-        }     
-        cb(result);
-    });
+	collection.update(whereStr, updateStr, function(err, result) {
+		if(err){
+		console.log('Error:'+ err);
+		return;
+		}     
+		cb(result);
+	});
 }   //更新备忘录
 
 
 var someDailyCss = function(db, idArray, cb){
-    var collection = db.collection('dailyCss');
-    var whereStr = {'$or':idArray};
+	var collection = db.collection('dailyCss');
+	var whereStr = {'$or':idArray};
 
-    collection.find(whereStr).limit(6).toArray(function(err, result) {
-        if(err)
-        {
-        console.log('Error:'+ err);
-        return;
-        }     
-        cb(result);
-    });   
+	collection.find(whereStr).limit(6).toArray(function(err, result) {
+		if(err)
+		{
+		console.log('Error:'+ err);
+		return;
+		}     
+		cb(result);
+	});   
 }   //查询未看评论的DailyCss
 
 
 var selectSomeDailyCss = function(db, num, ID, author, cb){
-    var collection = db.collection("dailyCss");
-    num = 6 - num;
-    var whereStr = {"id":{"$not":{"$in":ID}}, "username":author};
-    collection.find(whereStr).limit(num).toArray(function(err, result){
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    });
+	var collection = db.collection("dailyCss");
+	num = 6 - num;
+	var whereStr = {"id":{"$not":{"$in":ID}}, "username":author};
+	collection.find(whereStr).limit(num).toArray(function(err, result){
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	});
 
 }   //查询已看评论的DailyCss
 
 var seeOther = function(db, username, cb){
-    var collection = db.collection("dailyCss");
+	var collection = db.collection("dailyCss");
 
-    var whereStr = {"username":username};
-    collection.find(whereStr).toArray(function(err, result){
-        if(err){
-            console.log('Error' + err);
-            return;
-        }
-        cb(result);
-    });
+	var whereStr = {"username":username};
+	collection.find(whereStr).toArray(function(err, result){
+		if(err){
+			console.log('Error' + err);
+			return;
+		}
+		cb(result);
+	});
 }   //查看他人资料
 
 
 
 
 module.exports = {
-    findAllUser: findAllUser,
+	findAllUser: findAllUser,
 	findUser: findUser,
 	addUser: addUser,
 	addReminder: addReminder,
 	updatePersonalDetail: updatePersonalDetail,
 
-    insertDailyCss: insertDailyCss,
-    selectOneDailyCss:selectOneDailyCss,
-    selectSomeDailyCss:selectSomeDailyCss,
-    selectAllDailyCss:selectAllDailyCss,
-    someDailyCss:someDailyCss,
-    selectCount:selectCount,
-    seeOther:seeOther,
+	insertDailyCss: insertDailyCss,
+	selectOneDailyCss:selectOneDailyCss,
+	selectSomeDailyCss:selectSomeDailyCss,
+	selectAllDailyCss:selectAllDailyCss,
+	someDailyCss:someDailyCss,
+	selectCount:selectCount,
+	seeOther:seeOther,
 
-    insertComment:insertComment,
-    selectComment:selectComment,
-    updateComment:updateComment,
-    countComment:countComment,
+	insertComment:insertComment,
+	selectComment:selectComment,
+	updateComment:updateComment,
+	countComment:countComment,
 
-    insertFavorite:insertFavorite,
-    selectFavorite:selectFavorite,
-    delectFavorite:delectFavorite,
+	insertFavorite:insertFavorite,
+	selectFavorite:selectFavorite,
+	delectFavorite:delectFavorite,
 
-    updateMemo:updateMemo,
-    selectMemo:selectMemo,
-    insertMemo:insertMemo
+	updateMemo:updateMemo,
+	selectMemo:selectMemo,
+	insertMemo:insertMemo
 
 }
 

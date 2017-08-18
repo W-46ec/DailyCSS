@@ -1,6 +1,7 @@
 var express = require('express');
 var sha256 = require('sha256');
 var jwt = require('jsonwebtoken');
+var crypto = require('crypto');
 
 var mdb = require('../tools/db.js');
 var auth = require('../tools/auth.js');
@@ -26,7 +27,14 @@ router.post('/login', function(req, res, next) {
 				msg: 'Username does not exist!'
 			});
 		} else {
-			var pwdSalt = sha256(req.body.pwd + result[0].salt);
+			//HMACSHA256方式加盐
+			var pwdSalt = crypto.pbkdf2Sync(
+				req.body.pwd,
+				result[0].salt,
+				4096,	//迭代次数
+				256,	//生成密码长度
+				'sha256'
+			).toString('hex');
 			if(result[0].pwd === pwdSalt){
 				var head = auth.token(req.body.username);
 				res.setHeader("auth", head);
