@@ -13,7 +13,7 @@ var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 
-var urlConfig = 'http://192.168.0.105:3000';
+var urlConfig = 'http://xxx:3000';
 
 var register = [];
 var sentList = [];
