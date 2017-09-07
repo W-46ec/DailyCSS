@@ -6,6 +6,7 @@ var sha256 = require('sha256');
 var mdb = require('../tools/db.js');
 var auth = require('../tools/auth.js');
 var mail = require('../tools/mail.js');
+var config = require('../tools/config.js');
 
 var DB_CONN_STR = 'mongodb://localhost:27017/dailycss';
 var MongoClient = require('mongodb').MongoClient;
@@ -13,7 +14,7 @@ var selectCount = require('../tools/db').selectCount;
 var selectAllDailyCss = require('../tools/db').selectAllDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 
-var urlConfig = 'http://xxx:3000';
+//var urlConfig = 'http://xxx:3000';
 
 var register = [];
 var sentList = [];
@@ -98,7 +99,7 @@ router.post('/register', function(req, res, next) {
 				if(sentList.length != 0 &&
 					sentList.some(e => {
 						if(e.email === registerInfo.email &&
-							e.date + 120000 > +(new Date())){
+							e.date + config.registerEmailFrequency > +(new Date())){
 							return true;
 						}
 					})){	//2min
@@ -114,7 +115,7 @@ router.post('/register', function(req, res, next) {
 					};
 					sentList.push(sent);
 					var regToken = auth.registerToken(registerInfo);
-					var href = urlConfig + "/register?Token=" + regToken;
+					var href = config.urlConfig + "/register?Token=" + regToken;
 					var a = "<a href=\"" + href + "\">" + href + "</a>";
 					var msg = "<p>请于10分钟内完成验证</p><br>" + a;
 					mail.sendEmail(registerInfo.email, msg, function(err, info){
