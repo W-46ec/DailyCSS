@@ -17,7 +17,7 @@ var expires = {};
 
 var urlConfig = 'http://127.0.0.1:3000';
 
-var registerEmailFrequency = 120000;
+var registerEmailFrequency = 5000;
 
 module.exports = {
 	key: key,
