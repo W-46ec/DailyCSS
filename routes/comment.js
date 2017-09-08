@@ -6,15 +6,11 @@ var DB_CONN_STR = 'mongodb://localhost:27017/dailycss';
 var MongoClient = require('mongodb').MongoClient;
 var auth = require('../tools/auth.js');
 
-
 var selectOneDailyCss = require('../tools/db').selectOneDailyCss;
 var insertComment = require('../tools/db').insertComment;
 var selectComment = require('../tools/db').selectComment;
 var updateComment = require('../tools/db').updateComment;
 var countComment = require('../tools/db').countComment;
-
-
-
 
 router.post('/add',function(req, res, next){
 	var id = req.query.id;

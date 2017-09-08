@@ -4,7 +4,6 @@ var jwt = require('jsonwebtoken');
 var uuid = require('uuid');
 var auth = require('../tools/auth.js');
 
-
 var DB_CONN_STR = 'mongodb://localhost:27017/dailycss';
 var MongoClient = require('mongodb').MongoClient;
 
@@ -13,7 +12,6 @@ var selectOneDailyCss = require('../tools/db').selectOneDailyCss;
 var selectFavorite = require('../tools/db').selectFavorite;
 var insertFavorite = require('../tools/db').insertFavorite;
 var delectFavorite = require('../tools/db').delectFavorite;
-
 
 router.post('/submit', function(req, res, next){
 	var username = jwt.verify(req.headers["auth"], auth.key).username;
