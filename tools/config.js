@@ -5,6 +5,9 @@ var uuid = require('uuid');
 // var expires = {
 // 	expiresIn: '600000'
 // };
+// var registerExpires = {
+// 	expiresIn: '600000'
+// };
 
 // var urlConfig = 'http://xxx:3000';
 
@@ -12,12 +15,13 @@ var uuid = require('uuid');
 
 
 //developer mode
-var key = "key";
-var expires = {};
+var key = "key";	//Token 解密密钥
+var expires = {};	//Token过期时间
+var registerExpires = {};	//注册Token过期时间
 
-var urlConfig = 'http://39.108.117.83:3000';
+var urlConfig = 'http://39.108.117.83:3000';	//邮箱URL
 
-var registerEmailFrequency = 5000;
+var registerEmailFrequency = 5000;	//邮件发送频率限制
 
 module.exports = {
 	key: key,
