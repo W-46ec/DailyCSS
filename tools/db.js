@@ -145,7 +145,7 @@ var selectCount = function(db, cb){
 
 
 var selectAllDailyCss = function(db, cb){
-	var collection = db.collection('Css');
+	var collection = db.collection('dailyCss');
 
 	var whereStr = {"username":{$gte:""}};
 	collection.find(whereStr).toArray(function(err, result) {
