@@ -15,7 +15,7 @@ var uuid = require('uuid');
 var key = "key";
 var expires = {};
 
-var urlConfig = 'http://127.0.0.1:3000';
+var urlConfig = 'http://39.108.117.83:3000';
 
 var registerEmailFrequency = 5000;
 
