@@ -422,7 +422,7 @@
 
 <br/>
 #### 添加dailyCss
-接口名称：/user/dailycss
+接口名称：/user/dailycss/submit
 
 接口类型：POST
 
@@ -459,7 +459,7 @@
 |200|请求成功|Insert Succeed|
 
 #### 收藏dailyCss
-接口名称：/user/dailycss
+接口名称：/user/dailycss/collect
 
 接口类型：GET
 
@@ -497,7 +497,7 @@
 |403|收藏失败|已收藏过该dailyCss|
 
 #### 删除dailyCss
-接口名称：/user/dailycss
+接口名称：/user/dailycss/delete
 
 接口类型：GET
 
