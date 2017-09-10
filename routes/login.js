@@ -87,7 +87,6 @@ router.get('/*', function(req, res, next) {
 				//暂时不用每次请求都更换Token
 				//var newHead = auth.token(decoded.username);
 				//res.setHeader("auth", newHead);
-				console.log(decoded);	//test
 				res.setHeader("auth", req.headers["auth"]);
 				if(onLine.some(e => {
 					return e.username === decoded.username;

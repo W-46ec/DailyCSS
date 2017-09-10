@@ -3,8 +3,11 @@ var multer  = require('multer');
 var fs = require('fs');
 var jwt = require('jsonwebtoken');
 var path = require('path');
+var md5 = require('md5');
+var uuid = require('uuid');
 
 var auth = require('../tools/auth.js');
+var mdb = require('../tools/db.js');
 
 var router = express.Router();
 
@@ -21,6 +24,8 @@ router.post('/upload', function(req, res, next){
 			return;
 		} else {
 			//文件存放路径 & 命名
+			var filename = '';
+			var fileid = md5(uuid.v4());
 			var storage = multer.diskStorage({
 				destination: function (req, file, cb) {
 					cb(null, uploadFolder);
@@ -51,12 +56,16 @@ router.post('/upload', function(req, res, next){
 								path.join(uploadFolder, decoded.username + '.jpg'),
 								path.join(uploadFolder, decoded.username + '.png')
 							);
+							filename = path.join(uploadFolder, fileid + decoded.username + '.png');
 						} else if(fs.existsSync(path.join(uploadFolder, decoded.username + '.png')) &&
 							fileType === 'jpg'){
 							fs.renameSync(
 								path.join(uploadFolder, decoded.username + '.png'),
 								path.join(uploadFolder, decoded.username + '.jpg')
 							);
+							filename = path.join(uploadFolder, fileid + decoded.username + '.jpg');
+						} else {
+							filename = path.join(uploadFolder, fileid + decoded.username + '.' + fileType);
 						}
 						cb(null, true);
 					} else {
@@ -71,9 +80,28 @@ router.post('/upload', function(req, res, next){
 						msg: 'failed'
 					});
 				} else {
-					res.send({
-						code: 200,
-						msg: 'success'
+					var query = {
+						username: decoded.username,
+						filename: filename
+					};
+					mdb.uploadFiles(query, function(err, result){
+						if(err){
+							res.json({
+								code: 500,
+								msg: 'Error'
+							});
+						}
+						if(result.result.n === 1){
+							res.send({
+								code: 200,
+								msg: 'success'
+							});
+						} else {
+							res.json({
+								code: 80011,
+								msg: 'failed'
+							});
+						}
 					});
 				}
 			});
@@ -83,37 +111,57 @@ router.post('/upload', function(req, res, next){
 
 //获取头像URL列表（部分）
 router.post('/getfiles', function(req, res, next){
-	var ret = req.body.usernames.map(e => {
-		if(fs.existsSync(path.join('./public/upload', e + ".jpg"))){
-			return path.join('./public/upload', e + ".jpg");
-		} else if(fs.existsSync(path.join('./public/upload', e + ".png"))){
-			return path.join('./public/upload', e + ".png");
-		} else {
-			return undefined;
-		}
+	var data = [];
+	req.body.usernames.forEach(e => {
+		data.push({
+			username: e,
+			filename: null
+		});
 	});
-	res.json({
-		code: 200,
-		data: ret,
-		msg: "files"
-	});
-});
-
-//获取全部用户的头像URL列表（备用）
-router.get('/getallfiles', function(req, res, next){
-	fs.readdir(uploadFolder, function(err, files){
+	mdb.findAllFiles(function(err, result){
 		if(err){
 			res.json({
 				code: 500,
 				msg: 'Error'
 			});
-		} else {
+		}
+		for(var i = 0; i < data.length; i++){
+			for(var j = 0; j < result.length; j++){
+				if(data[i].username === result[j].username){
+					data[i].filename = result[j].filename;
+					break;
+				}
+			}
+		}
+		res.json({
+			code: 200,
+			data: data,
+			msg: "files"
+		});
+	});
+});
+
+//获取全部用户的头像URL列表（备用）
+router.get('/getallfiles', function(req, res, next){
+	mdb.findAllFiles(function(err, result){
+		if(err){
 			res.json({
-				code: 200,
-				data: files.map(e => path.join('./public/upload', e)),
-				msg: 'success'
+				code: 500,
+				msg: 'Error'
 			});
 		}
+		var data = [];
+		result.map(e => {
+			data.push({
+				username: e.username,
+				filename: e.filename
+			});
+		});
+		res.json({
+			code: 200,
+			data: data,
+			msg: "success"
+		});
 	});
 });
 

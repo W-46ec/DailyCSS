@@ -13,6 +13,13 @@ var uuid = require('uuid');
 
 // var registerEmailFrequency = 120000;
 
+// //数据库表名设置
+// var mdbTable = {
+// 	tbUser: 'users',
+// 	tbReminder: 'reminder',
+// 	tbFiles:'files'
+// };
+
 
 //developer mode
 var key = "key";	//Token 解密密钥
@@ -23,9 +30,18 @@ var urlConfig = 'http://39.108.117.83:3000';	//邮箱URL
 
 var registerEmailFrequency = 5000;	//邮件发送频率限制
 
+//数据库表名设置
+var mdbTable = {
+	tbUser: 'users',
+	tbReminder: 'reminder',
+	tbFiles:'files'
+};
+
 module.exports = {
 	key: key,
 	expires: expires,
+	registerExpires: registerExpires,
 	urlConfig: urlConfig,
-	registerEmailFrequency: registerEmailFrequency
+	registerEmailFrequency: registerEmailFrequency,
+	mdbTable: mdbTable
 }

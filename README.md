@@ -45,12 +45,12 @@
 		"code":200,
 		"favorite":[],		
 		"dailyCss": {
-        "_id": "5982940f00d6960df4180b6a",
-        "username": "zxc110",
-        "content": "早上下雨",
-        "date": "2017-08-03 11:10:07",
-        "id": "d70174a8-ece5-45eb-9f62-80a7853941dc"
-    }
+		"_id": "5982940f00d6960df4180b6a",
+		"username": "zxc110",
+		"content": "早上下雨",
+		"date": "2017-08-03 11:10:07",
+		"id": "d70174a8-ece5-45eb-9f62-80a7853941dc"
+	}
 		"msg":"Welcome!"
 	}
 ```
@@ -447,8 +447,8 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "msg": "Insert Succeed"
+		"code": 200,
+		"msg": "Insert Succeed"
 	}
 ```
 
@@ -484,8 +484,8 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "msg": "收藏成功"
+		"code": 200,
+		"msg": "收藏成功"
 	}
 ```
 
@@ -522,8 +522,8 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "msg": "删除收藏成功"
+		"code": 200,
+		"msg": "删除收藏成功"
 	}
 ```
 
@@ -562,8 +562,8 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "msg": "Comment Succeed"
+		"code": 200,
+		"msg": "Comment Succeed"
 	}
 ```
 
@@ -600,25 +600,25 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data":[{
-		    "_id": "5982c9e1b73b0d36b43943dc",
-		    "id": "d70174a8-ece5-45eb-9f62-80a7853941dc",
-            "commentator": "honor",
-            "comment": "花菜是菜花",
-            "date": "2017-08-03 14:59:45",
-            "author": "zxc110",
-            "status": "1"
-	    },
-	    ……],
-	    "dailyCss": {
-        "_id": "5982940f00d6960df4180b6a",
-        "username": "zxc110",
-        "content": "早上下雨",
-        "date": "2017-08-03 11:10:07",
-        "id": "d70174a8-ece5-45eb-9f62-80a7853941dc"
-    },
-	    "msg": "Comment Succeed"
+		"code": 200,
+		"data":[{
+			"_id": "5982c9e1b73b0d36b43943dc",
+			"id": "d70174a8-ece5-45eb-9f62-80a7853941dc",
+			"commentator": "honor",
+			"comment": "花菜是菜花",
+			"date": "2017-08-03 14:59:45",
+			"author": "zxc110",
+			"status": "1"
+		},
+		……],
+		"dailyCss": {
+		"_id": "5982940f00d6960df4180b6a",
+		"username": "zxc110",
+		"content": "早上下雨",
+		"date": "2017-08-03 11:10:07",
+		"id": "d70174a8-ece5-45eb-9f62-80a7853941dc"
+	},
+		"msg": "Comment Succeed"
 	}
 ```
 <br/>
@@ -649,9 +649,9 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data":3	
-	    "msg": "未查看评论总数"
+		"code": 200,
+		"data":3	
+		"msg": "未查看评论总数"
 	}
 ```
 <br/>
@@ -687,16 +687,16 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data": [
-	        {
-            "_id": "598297c8f8c0f220980a5f79",
-            "id": "5",
-            "username": "honor",
-            "time": "周四",
-            "thing": "睡觉"
-        }],
-	    "msg": "成功查看备忘录"
+		"code": 200,
+		"data": [
+			{
+			"_id": "598297c8f8c0f220980a5f79",
+			"id": "5",
+			"username": "honor",
+			"time": "周四",
+			"thing": "睡觉"
+		}],
+		"msg": "成功查看备忘录"
 	}
 ```
 
@@ -735,12 +735,12 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data": [
+		"code": 200,
+		"data": [
 				"code":200,
 				"msg":"成功更新备忘录"
-        }],
-	    "msg": "成功更新备忘录"
+		}],
+		"msg": "成功更新备忘录"
 	}
 ```
 
@@ -777,13 +777,13 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data": {
-	        "username": "admin",
-	        "blog": "admin.blog",
-	        "email": "admin@css.com"
-	    },
-	    "msg": "personaldetail"
+		"code": 200,
+		"data": {
+			"username": "admin",
+			"blog": "admin.blog",
+			"email": "admin@css.com"
+		},
+		"msg": "personaldetail"
 	}
 ```
 
@@ -880,6 +880,7 @@
 |80010|Token不合法或过期|Invalid token|
 |80011|上传失败|failed|
 |200|上传成功|success|
+|500|服务器错误|Error|
 
 
 <br/>
@@ -904,7 +905,7 @@
 |参数|含义|类型|备注|
 |---|
 |code|状态值|number||
-|data|返回值|array|请求头像的URL列表，没有则返回null|
+|data|返回值|array|请求头像的用户名和URL对象列表，没有则URL为null|
 |msg|消息|string||
 
 <br/>
@@ -922,12 +923,15 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data": [
-	        "public\\upload\\admin.jpg",
-	        null
-	    ],
-	    "msg": "files"
+		"code": 200,
+		"data": [{
+			"username": "admin",
+			"filename": "public\\upload\\6b744183eac159393217bbc6db04e59dadmin.jpg"
+		},{
+			"username": "test",
+			"filename": null
+		}],
+		"msg": "files"
 	}
 ```
 
@@ -936,6 +940,8 @@
 |状态码|含义|消息|
 |---|
 |200|请求成功|files|
+|80010|Token不合法或过期|Invalid token|
+|500|服务器错误|Error|
 
 
 <br/>
@@ -964,11 +970,11 @@
 **响应示例**
 ```json
 	{
-	    "code": 200,
-	    "data": [
-	        "public\\upload\\admin.jpg"
-	    ],
-	    "msg": "success"
+		"code": 200,
+		"data": [{
+			"public\\upload\\6b744183eac159393217bbc6db04e59dadmin.jpg"
+		}],
+		"msg": "success"
 	}
 ```
 

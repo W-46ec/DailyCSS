@@ -2,11 +2,14 @@ var sha256 = require('sha256');
 var uuid = require('uuid');
 var crypto = require('crypto');
 
+var config = require('../tools/config.js');
+
 var mongoClient = require('mongodb').MongoClient;
 var DB_CONN_STR = 'mongodb://127.0.0.1:27017/dailycss';
 
-var tbUser = 'users';
-var tbReminder = 'reminder';
+var tbUser = config.mdbTable.tbUser;
+var tbReminder = config.mdbTable.tbReminder;
+var tbFiles = config.mdbTable.tbFiles;
 
 //获取所有用户
 var findAllUser = function(callback){
@@ -101,6 +104,38 @@ var updatePersonalDetail = function(username, update, callback){
 	});
 }
 
+//记录用户头像文件名
+var uploadFiles = function(query, callback){
+	mongoClient.connect(DB_CONN_STR,function(err,db){
+		var collection = db.collection(tbFiles);
+		var whereStr = {"username": query.username};
+		var updateStr = {$set: {"filename": query.filename}};
+		collection.update(whereStr, updateStr, {upsert: true}, function(err,result){
+			callback(err, result);
+			db.close();
+		});
+	});
+}
+
+// //获取头像URL列表（部分）
+// var findFile = function(usernames, callback){
+// 	mongoClient.connect(DB_CONN_STR,function(err,db){
+// 		var collection = db.collection(tbFiles);
+// 		collection.find(usernames).toArray(function(err, result){
+// 			callback(err, result);
+// 		});
+// 	});
+// }
+
+//获取全部用户的头像URL列表（备用）
+var findAllFiles = function(callback){
+	mongoClient.connect(DB_CONN_STR, function(err, db){
+		var collection = db.collection(tbFiles);
+		collection.find().toArray(function(err, result){
+			callback(err, result);
+		});
+	});
+}
 
 var insertDailyCss = function(db, data, cb){  
 	var collection = db.collection('dailyCss');
@@ -371,6 +406,9 @@ module.exports = {
 	addUser: addUser,
 	addReminder: addReminder,
 	updatePersonalDetail: updatePersonalDetail,
+
+	uploadFiles: uploadFiles,
+	findAllFiles: findAllFiles,
 
 	insertDailyCss: insertDailyCss,
 	selectOneDailyCss:selectOneDailyCss,
