@@ -55,7 +55,7 @@ router.get('/collect', function(req, res, next){
 			var data = {
 				id,
 				username,
-				author,
+				author, 
 				content
 			};
 			selectFavorite(db, checkData, function(a){
@@ -84,11 +84,21 @@ router.get('/delete',function(req, res, next){
 	var id = req.query.id;
 	MongoClient.connect(DB_CONN_STR, function(err, db) {
 		delectFavorite(db, username, id, function(result) {
-			res.json({
-				code:200,
-				msg:'删除收藏成功'
-			});
-			db.close();
+			if(result.result.n === 1){
+				res.json({
+					code:200,
+					msg:'删除收藏成功'
+				});
+				db.close();
+			} else {
+
+				res.json({
+					code:404,
+					msg:'删除收藏失败'
+				});
+				db.close();
+
+			}
 		});
 	}) 
 
