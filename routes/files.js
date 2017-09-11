@@ -13,6 +13,26 @@ var router = express.Router();
 
 var uploadFolder = './public/upload/';
 
+//获取文件真实类型
+var getFileType = function(typeCode){
+	var ret = false;
+	switch (typeCode){
+		case 'ffd8ffe0':	//jpg
+			ret = 'jpg';
+			break;
+		case 'ffd8ffe1':	//jpg
+			ret = 'jpg';
+			break;
+		case '89504e47':	//png
+			ret = 'png';
+			break;
+		default:	//unknow
+			ret = null;
+			break;
+	}
+	return ret;
+}
+
 //上传头像
 router.post('/upload', function(req, res, next){
 	jwt.verify(req.headers["auth"], auth.key, function(err, decoded){
@@ -23,81 +43,78 @@ router.post('/upload', function(req, res, next){
 			});
 			return;
 		} else {
-			//文件存放路径 & 命名
-			var filename = '';
-			var fileid = md5(uuid.v4());
-			var storage = multer.diskStorage({
-				destination: function (req, file, cb) {
-					cb(null, uploadFolder);
-				},
-				filename: function(req, file, cb){
-					var fileFormat = (file.originalname).split(".");
-					cb(
-						null,
-						fileid + 
-						decoded.username + 
-						"." + 
-						fileFormat[fileFormat.length - 1]
-					);
-				}
+			var chunks = [];
+			var size = 0;
+			req.on('data', function(chunk){
+				chunks.push(chunk);
+				size += chunk.length;
 			});
-			//文件类型过滤
-			var upload = multer({
-				storage: storage,
-				fileFilter: function(req, file, cb){
-					var fileFormat = (file.originalname).split(".");
-					var fileType = fileFormat[fileFormat.length - 1];
-					if((file.mimetype === 'image/jpeg' || 
-						file.mimetype === 'image/png') &&
-						(fileType === 'jpg' || 
-						fileType === 'png')){
-						mdb.getFile(decoded.username, function(err, result){
-							if(err){
-								res.json({
-									code: 500,
-									msg: 'Error'
-								});
-							}
-							if(fs.existsSync(result[0].filename)){
-								fs.unlinkSync(result[0].filename);
-							}
-							filename = path.join(uploadFolder, fileid + decoded.username + '.' + fileType);
-							cb(null, true);
-						});
-					} else {
-						cb(new Error('Reject!'));
+			req.on('end', function(){
+				var buffer = Buffer.concat(chunks , size);
+				var rems = [];
+				//根据\r\n分离数据和报头
+				for(var i = 0; i < buffer.length; i++){
+					var v = buffer[i];
+					var v2 = buffer[i+1];
+					if(v == 13 && v2 == 10){
+						rems.push(i);
 					}
 				}
-			}).single('profilephoto');
-			upload(req, res, function(err){
-				if(err){
-					res.json({
-						code: 80011,
-						msg: 'failed'
-					});
-				} else {
-					var query = {
-						username: decoded.username,
-						filename: filename
-					};
-					mdb.uploadFiles(query, function(err, result){
+				var nbuf = buffer.slice(rems[3] + 2, rems[rems.length - 2]);
+				var newBuf = nbuf.slice(0, 4);
+				var head_1 = newBuf[0].toString(16);
+				var head_2 = newBuf[1].toString(16);
+				var head_3 = newBuf[2].toString(16);
+				var head_4 = newBuf[3].toString(16);
+				var typeCode = head_1 + head_2 + head_3 + head_4;
+				if(getFileType(typeCode) === 'jpg' || 
+					getFileType(typeCode) === 'png'){
+					mdb.getFile(decoded.username, function(err, result){
 						if(err){
 							res.json({
 								code: 500,
 								msg: 'Error'
 							});
 						}
-						if(result.result.n === 1){
-							res.send({
-								code: 200,
-								msg: 'success'
-							});
-						} else {
-							res.json({
-								code: 80011,
-								msg: 'failed'
-							});
+						if(fs.existsSync(result[0].filename)){
+							fs.unlinkSync(result[0].filename);
 						}
+						var fileid = md5(uuid.v4());
+						var filename = path.join(
+							uploadFolder, 
+							fileid + 
+							decoded.username + '.' + 
+							getFileType(typeCode)
+						);
+						fs.writeFileSync(filename, nbuf);
+						var query = {
+							username: decoded.username,
+							filename: filename
+						};
+						mdb.uploadFiles(query, function(err, result){
+							if(err){
+								res.json({
+									code: 500,
+									msg: 'Error'
+								});
+							}
+							if(result.result.n === 1){
+								res.send({
+									code: 200,
+									msg: 'success'
+								});
+							} else {
+								res.json({
+									code: 80011,
+									msg: 'failed'
+								});
+							}
+						});
+					});
+				} else {
+					res.json({
+						code: 80011,
+						msg: 'failed'
 					});
 				}
 			});
