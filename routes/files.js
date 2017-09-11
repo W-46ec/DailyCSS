@@ -33,7 +33,8 @@ router.post('/upload', function(req, res, next){
 				filename: function(req, file, cb){
 					var fileFormat = (file.originalname).split(".");
 					cb(
-						null, 
+						null,
+						fileid + 
 						decoded.username + 
 						"." + 
 						fileFormat[fileFormat.length - 1]
@@ -50,24 +51,19 @@ router.post('/upload', function(req, res, next){
 						file.mimetype === 'image/png') &&
 						(fileType === 'jpg' || 
 						fileType === 'png')){
-						if(fs.existsSync(path.join(uploadFolder, decoded.username + '.jpg')) &&
-							fileType === 'png'){
-							fs.renameSync(
-								path.join(uploadFolder, decoded.username + '.jpg'),
-								path.join(uploadFolder, decoded.username + '.png')
-							);
-							filename = path.join(uploadFolder, fileid + decoded.username + '.png');
-						} else if(fs.existsSync(path.join(uploadFolder, decoded.username + '.png')) &&
-							fileType === 'jpg'){
-							fs.renameSync(
-								path.join(uploadFolder, decoded.username + '.png'),
-								path.join(uploadFolder, decoded.username + '.jpg')
-							);
-							filename = path.join(uploadFolder, fileid + decoded.username + '.jpg');
-						} else {
+						mdb.getFile(decoded.username, function(err, result){
+							if(err){
+								res.json({
+									code: 500,
+									msg: 'Error'
+								});
+							}
+							if(fs.existsSync(result[0].filename)){
+								fs.unlinkSync(result[0].filename);
+							}
 							filename = path.join(uploadFolder, fileid + decoded.username + '.' + fileType);
-						}
-						cb(null, true);
+							cb(null, true);
+						});
 					} else {
 						cb(new Error('Reject!'));
 					}

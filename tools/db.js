@@ -117,17 +117,18 @@ var uploadFiles = function(query, callback){
 	});
 }
 
-// //获取头像URL列表（部分）
-// var findFile = function(usernames, callback){
-// 	mongoClient.connect(DB_CONN_STR,function(err,db){
-// 		var collection = db.collection(tbFiles);
-// 		collection.find(usernames).toArray(function(err, result){
-// 			callback(err, result);
-// 		});
-// 	});
-// }
+//获取用户头像URL
+var getFile = function(username, callback){
+	mongoClient.connect(DB_CONN_STR,function(err,db){
+		var collection = db.collection(tbFiles);
+		var whereStr = {"username": username};
+		collection.find(whereStr).toArray(function(err, result){
+			callback(err, result);
+		});
+	});
+}
 
-//获取全部用户的头像URL列表（备用）
+//获取全部用户的头像URL列表
 var findAllFiles = function(callback){
 	mongoClient.connect(DB_CONN_STR, function(err, db){
 		var collection = db.collection(tbFiles);
@@ -408,6 +409,7 @@ module.exports = {
 	updatePersonalDetail: updatePersonalDetail,
 
 	uploadFiles: uploadFiles,
+	getFile: getFile,
 	findAllFiles: findAllFiles,
 
 	insertDailyCss: insertDailyCss,

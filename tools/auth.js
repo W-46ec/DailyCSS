@@ -18,7 +18,7 @@ var registerToken = function(info){
 		username: info.username,
 		status: 1
 	};
-	return jwt.sign(payload, config.key, config.expires);	//10min
+	return jwt.sign(payload, config.key, config.registerExpires);	//10min
 }
 
 module.exports = {
