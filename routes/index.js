@@ -20,7 +20,7 @@ var register = [];
 var sentList = [];
 
 router.get('/',function(req, res, next){
-	if(req.headers["auth"] === undefined){
+	if(req.headers["auth"] === undefined || req.headers["auth"] === 'null'){
 		var username = ' ';
 		
 	} else {
