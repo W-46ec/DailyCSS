@@ -76,8 +76,8 @@ router.post('/upload', function(req, res, next){
 								msg: 'Error'
 							});
 						}
-						if(fs.existsSync(result[0].filename)){
-							fs.unlinkSync(result[0].filename);
+						if(fs.existsSync(result[0].filename.split('/').slice(1).join('\\'))){
+							fs.unlinkSync(result[0].filename.split('/').slice(1).join('\\'));
 						}
 						var fileid = md5(uuid.v4());
 						var filename = path.join(
@@ -89,7 +89,7 @@ router.post('/upload', function(req, res, next){
 						fs.writeFileSync(filename, nbuf);
 						var query = {
 							username: decoded.username,
-							filename: filename
+							filename: '/' + filename.replace(/\\/g, '/')
 						};
 						mdb.uploadFiles(query, function(err, result){
 							if(err){

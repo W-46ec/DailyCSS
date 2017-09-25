@@ -852,10 +852,7 @@
 示例URL：http://127.0.0.1:3000/user/files/upload
 
 <br/>
-**请求参数列表**
-|参数|含义|类型|备注|
-|---|
-|profilephoto|图像文件||仅限jpg和png格式|
+**无请求参数列表**
 
 <br/>
 **响应参数列表**
@@ -926,7 +923,7 @@
 		"code": 200,
 		"data": [{
 			"username": "admin",
-			"filename": "public\\upload\\6b744183eac159393217bbc6db04e59dadmin.jpg"
+			"filename": "/public/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
 		},{
 			"username": "test",
 			"filename": null
@@ -972,7 +969,7 @@
 	{
 		"code": 200,
 		"data": [{
-			"public\\upload\\6b744183eac159393217bbc6db04e59dadmin.jpg"
+			"/public/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
 		}],
 		"msg": "success"
 	}
