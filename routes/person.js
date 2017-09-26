@@ -65,7 +65,7 @@ router.post('/memo', function(req, res, next){
 
 router.get('/display', function(req, res, next){
 	var author = jwt.verify(req.headers["auth"], auth.key).username;
-	var id = req.query.button;
+	var id = req.query.	;
 	if (("username" in req.query && !(req.query.username === author)) || id === '0'){
 		if(!id){
 			var author = req.query.username;
@@ -97,10 +97,12 @@ router.get('/display', function(req, res, next){
 					if(!acc.includes(cur))	acc.push(cur);
 					return acc;
 				},[]);
-
+				console.log(idArray);
+				
 				sum = ID.length;
 				someDailyCss(db, idArray, function(result){
 					if(sum > 6){
+						console.log(idArray);
 						res.json({
 						code:200,
 						data:result,
@@ -109,6 +111,7 @@ router.get('/display', function(req, res, next){
 					}else {
 						selectSomeDailyCss(db, sum, ID, author, function(end){
 							end = end.reverse();
+							console.log(idArray);
 							res.json({
 								code:200,
 								data:result,
