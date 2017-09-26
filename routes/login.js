@@ -179,6 +179,13 @@ router.get('/getonline', function(req, res, next){
 			});
 		} else {
 			mdb.findAllUser(function(err, result){
+				if(err){
+					res.json({
+						code: 500,
+						msg: 'Error'
+					});
+					return;
+				}
 				var number = 0;
 				var list = result.map(e => {
 					let s = 1;
