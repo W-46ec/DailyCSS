@@ -92,19 +92,22 @@
 	    "code": 200,
 	    "data": [
 	        {
-	            "username": "W-46ec",   //请求者的用户名(排在第一个)
-	            "iat": 1506405723026,   //最后一次请求的时间
-	            "status": 1    //1表示在线，0表示离线
+	            "username": "night",	//请求者的用户名(排在第一个)
+	            "iat": 1506405723026,	//最后一次请求的时间
+	            "status": 1,	//1表示在线，0表示离线
+	            "blog": "a.com"	//个人博客
 	        },
 	        {
 	            "username": "admin",
 	            "iat": 1506405700715,
-	            "status": 1
+	            "status": 1,
+	            "blog": "b.com"
 	        },
 	        {
 	            "username": "test",
 	            "iat": 0,
-	            "status": 0
+	            "status": 0,
+	            "blog": "c.com"
 	        }
 	    ],
 	    "number": 2,   //在线人数
