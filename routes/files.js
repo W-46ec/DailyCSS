@@ -77,8 +77,14 @@ router.post('/upload', function(req, res, next){
 							});
 						}
 						if(result.length != 0){
-							if(fs.existsSync(result[0].filename.split('/').slice(1).join('\\'))){
-								fs.unlinkSync(result[0].filename.split('/').slice(1).join('\\'));
+							if(fs.existsSync(path.join(
+									'./public/',
+									result[0].filename.split('/').slice(1).join('\\')
+								))){
+								fs.unlinkSync(path.join(
+									'./public/',
+									result[0].filename.split('/').slice(1).join('\\')
+								));
 							}
 						}
 						var fileid = md5(uuid.v4());
@@ -91,7 +97,7 @@ router.post('/upload', function(req, res, next){
 						fs.writeFileSync(filename, nbuf);
 						var query = {
 							username: decoded.username,
-							filename: '/' + filename.replace(/\\/g, '/')
+							filename: filename.replace(/\\/g, '/').replace(/public/g, '')
 						};
 						mdb.uploadFiles(query, function(err, result){
 							if(err){
@@ -101,8 +107,9 @@ router.post('/upload', function(req, res, next){
 								});
 							}
 							if(result.result.n === 1){
-								res.send({
+								res.json({
 									code: 200,
+									data: filename.replace(/\\/g, '/').replace(/public/g, ''),
 									msg: 'success'
 								});
 							} else {
