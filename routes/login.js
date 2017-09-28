@@ -194,10 +194,12 @@ router.get('/getonline', function(req, res, next){
 							s = 0;
 							if(onLine[i].iat + 300 * 1000 > +(new Date())){
 								onLine[i].status = 1;
+								onLine[i].blog = e.blog;
 								number++;
 								return onLine[i];
 							} else {
 								onLine[i].status = 0;
+								onLine[i].blog = e.blog;
 								return onLine[i];
 							}
 						} 
@@ -205,6 +207,7 @@ router.get('/getonline', function(req, res, next){
 					if(s){
 						return {
 							username: e.username,
+							blog: e.blog,
 							iat: 0,
 							status: 0
 						}

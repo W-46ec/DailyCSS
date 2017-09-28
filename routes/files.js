@@ -76,8 +76,10 @@ router.post('/upload', function(req, res, next){
 								msg: 'Error'
 							});
 						}
-						if(fs.existsSync(result[0].filename.split('/').slice(1).join('\\'))){
-							fs.unlinkSync(result[0].filename.split('/').slice(1).join('\\'));
+						if(result.length != 0){
+							if(fs.existsSync(result[0].filename.split('/').slice(1).join('\\'))){
+								fs.unlinkSync(result[0].filename.split('/').slice(1).join('\\'));
+							}
 						}
 						var fileid = md5(uuid.v4());
 						var filename = path.join(
