@@ -83,7 +83,6 @@ router.get('/display', function(req, res, next){
 	} else {
 		MongoClient.connect(DB_CONN_STR, function(err, db){
 			countComment(db, author, function(result){
-				console.log(author);
 				var idArray = [];
 				var ID = [];
 				var i, sum = 0 ;
@@ -98,7 +97,7 @@ router.get('/display', function(req, res, next){
 					if(!acc.includes(cur))	acc.push(cur);
 					return acc;
 				},[]);
-				console.log(idArray);
+
 				sum = idArray.length;
 
 				if(sum === 0){
@@ -107,13 +106,12 @@ router.get('/display', function(req, res, next){
 						res.json({
 							code:200,
 							data:result,
-							msg:'查看自己资料'
+							msg:'查看自己资料，无未查看评论'
 						});
 					});
 				} else {
 					someDailyCss(db, idArray, function(result){
 						if(sum > 6){
-							console.log(idArray);
 							res.json({
 							code:200,
 							data:result,
@@ -122,7 +120,6 @@ router.get('/display', function(req, res, next){
 						}else {
 							selectSomeDailyCss(db, sum, ID, author, function(end){
 								end = end.reverse();
-								console.log(idArray);
 								res.json({
 									code:200,
 									data:result,

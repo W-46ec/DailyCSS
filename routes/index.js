@@ -34,7 +34,6 @@ router.get('/',function(req, res, next){
 			var a = Math.round(Math.random()*(count - 1) + 0);
 			selectAllDailyCss(db, function(data){
 				selectFavorite(db, checkdata, function(result){
-					console.log(data+"123");
 					if(data.length === 0){
 						data[a] = [];
 					}
@@ -44,7 +43,6 @@ router.get('/',function(req, res, next){
 						dailyCss:data[a],
 						msg:'Welcome!'
 					});
-					console.log(result);
 					db.close();
 				})
 			})
