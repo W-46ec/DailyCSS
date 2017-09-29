@@ -375,11 +375,12 @@ var selectSomeDailyCss = function(db, num, ID, author, cb){
 	var collection = db.collection("dailyCss");
 	num = 6 - num;
 	var whereStr = {"id":{"$not":{"$in":ID}}, "username":author};
-	collection.find(whereStr).limit(num).toArray(function(err, result){
+	collection.find(whereStr).toArray(function(err, result){
 		if(err){
 			console.log('Error' + err);
 			return;
 		}
+		result = result.reverse().splice(0, num);
 		cb(result);
 	});
 

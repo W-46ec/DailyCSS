@@ -111,6 +111,7 @@ router.get('/display', function(req, res, next){
 					});
 				} else {
 					someDailyCss(db, idArray, function(result){
+						result = result.reverse();
 						if(sum > 6){
 							res.json({
 							code:200,
@@ -119,7 +120,6 @@ router.get('/display', function(req, res, next){
 							});
 						}else {
 							selectSomeDailyCss(db, sum, ID, author, function(end){
-								end = end.reverse();
 								res.json({
 									code:200,
 									data:result,
