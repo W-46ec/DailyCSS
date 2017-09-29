@@ -919,14 +919,16 @@
 |参数|含义|类型|备注|
 |---|
 |code|状态值|number||
+|filename|上传头像的URL|string||
 |msg|消息|string||
 
 <br/>
 **响应示例**
 ```json
 	{
-		"code":200,
-		"msg":"success"
+		"code": 200,
+		"filename": "/upload/6b744183eac159393217bbc6db04e59dadmin.jpg",
+		"msg": "success"
 	}
 ```
 
@@ -983,7 +985,7 @@
 		"code": 200,
 		"data": [{
 			"username": "admin",
-			"filename": "/public/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
+			"filename": "/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
 		},{
 			"username": "test",
 			"filename": null
@@ -1029,7 +1031,7 @@
 	{
 		"code": 200,
 		"data": [{
-			"/public/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
+			"/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
 		}],
 		"msg": "success"
 	}

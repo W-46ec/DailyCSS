@@ -70,6 +70,9 @@ var addReminder = function(username, callback){
 		var collection = db.collection(tbReminder);
 		var data = [{
 			username: username,
+			id: "0"
+		}, {
+			username: username,
 			id: "1"
 		}, {
 			username: username,
@@ -80,9 +83,6 @@ var addReminder = function(username, callback){
 		}, {
 			username: username,
 			id: "4"
-		}, {
-			username: username,
-			id: "5"
 		}];
 		collection.insert(data, {multi:true}, function(err,result){
 			callback(err, result);
@@ -313,7 +313,7 @@ var selectMemo = function(db, username, cb){
 
 	var whereStr = {"username":username};
 
-	collection.find(whereStr).toArray(function(err, result){
+	collection.find(whereStr).sort({id: 1}).toArray(function(err, result){
 		if(err)
 		{
 		console.log('Error:'+ err);

@@ -77,8 +77,18 @@ router.post('/upload', function(req, res, next){
 							});
 						}
 						if(result.length != 0){
-							if(fs.existsSync(result[0].filename.split('/').slice(1).join('\\'))){
-								fs.unlinkSync(result[0].filename.split('/').slice(1).join('\\'));
+							if(fs.existsSync(path.join(
+									'./public/',
+									result[0].filename
+								))){
+								console.log("Remove:" + path.join(
+									'./public/',
+									result[0].filename
+								));
+								fs.unlinkSync(path.join(
+									'./public/',
+									result[0].filename
+								));
 							}
 						}
 						var fileid = md5(uuid.v4());
@@ -91,7 +101,7 @@ router.post('/upload', function(req, res, next){
 						fs.writeFileSync(filename, nbuf);
 						var query = {
 							username: decoded.username,
-							filename: '/' + filename.replace(/\\/g, '/')
+							filename: filename.replace(/\\/g, '/').replace(/public/g, '')
 						};
 						mdb.uploadFiles(query, function(err, result){
 							if(err){
@@ -101,8 +111,9 @@ router.post('/upload', function(req, res, next){
 								});
 							}
 							if(result.result.n === 1){
-								res.send({
+								res.json({
 									code: 200,
+									data: filename.replace(/\\/g, '/').replace(/public/g, ''),
 									msg: 'success'
 								});
 							} else {
@@ -127,7 +138,7 @@ router.post('/upload', function(req, res, next){
 //获取头像URL列表（部分）
 router.post('/getfiles', function(req, res, next){
 	var data = [];
-	req.body.usernames.forEach(e => {
+	JSON.parse(req.body.usernames).forEach(e => {
 		data.push({
 			username: e,
 			filename: null
