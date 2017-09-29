@@ -81,6 +81,10 @@ router.post('/upload', function(req, res, next){
 									'./public/',
 									result[0].filename.split('/').slice(1).join('\\')
 								))){
+								console.log("Remove:" + path.join(
+									'./public/',
+									result[0].filename.split('/').slice(1).join('\\')
+								));
 								fs.unlinkSync(path.join(
 									'./public/',
 									result[0].filename.split('/').slice(1).join('\\')
