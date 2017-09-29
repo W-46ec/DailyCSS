@@ -313,7 +313,7 @@ var selectMemo = function(db, username, cb){
 
 	var whereStr = {"username":username};
 
-	collection.find(whereStr).toArray(function(err, result){
+	collection.find(whereStr).sort({id: 1}).toArray(function(err, result){
 		if(err)
 		{
 		console.log('Error:'+ err);

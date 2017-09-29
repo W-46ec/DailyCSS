@@ -79,15 +79,15 @@ router.post('/upload', function(req, res, next){
 						if(result.length != 0){
 							if(fs.existsSync(path.join(
 									'./public/',
-									result[0].filename.split('/').slice(1).join('\\')
+									result[0].filename
 								))){
 								console.log("Remove:" + path.join(
 									'./public/',
-									result[0].filename.split('/').slice(1).join('\\')
+									result[0].filename
 								));
 								fs.unlinkSync(path.join(
 									'./public/',
-									result[0].filename.split('/').slice(1).join('\\')
+									result[0].filename
 								));
 							}
 						}
@@ -138,7 +138,7 @@ router.post('/upload', function(req, res, next){
 //获取头像URL列表（部分）
 router.post('/getfiles', function(req, res, next){
 	var data = [];
-	req.body.usernames.forEach(e => {
+	eval(req.body.usernames).forEach(e => {
 		data.push({
 			username: e,
 			filename: null
