@@ -138,7 +138,7 @@ router.post('/upload', function(req, res, next){
 //获取头像URL列表（部分）
 router.post('/getfiles', function(req, res, next){
 	var data = [];
-	eval(req.body.usernames).forEach(e => {
+	JSON.parse(req.body.usernames).forEach(e => {
 		data.push({
 			username: e,
 			filename: null
