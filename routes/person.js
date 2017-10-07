@@ -66,6 +66,7 @@ router.post('/memo', function(req, res, next){
 router.get('/display', function(req, res, next){
 	var author = jwt.verify(req.headers["auth"], auth.key).username;
 	var id = req.query.button;
+	var open = req.query.open;
 	if (("username" in req.query && !(req.query.username === author)) || id === '0'){
 		if(!id){
 			var author = req.query.username;
@@ -99,14 +100,14 @@ router.get('/display', function(req, res, next){
 				},[]);
 
 				sum = idArray.length;
-
-				if(sum === 0){
+ 
+				if(sum === 0 || open === 1){
 					seeOther(db, author, function(result){
 						result = result.reverse();
 						res.json({
 							code:200,
 							data:result,
-							msg:'查看自己资料，无未查看评论'
+							msg:'查看自己资料，无未查看评论或关闭评论通知'
 						});
 					});
 				} else {
