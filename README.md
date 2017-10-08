@@ -964,7 +964,7 @@
 |参数|含义|类型|备注|
 |---|
 |code|状态值|number||
-|data|返回值|array|请求头像的用户名和URL对象列表，没有则URL为null|
+|data|返回值|array|请求头像的用户名和URL对象列表，没有则URL为默认路径|
 |msg|消息|string||
 
 <br/>
@@ -988,7 +988,7 @@
 			"filename": "/upload/6b744183eac159393217bbc6db04e59dadmin.jpg"
 		},{
 			"username": "test",
-			"filename": null
+			"filename": "/upload/default.png"
 		}],
 		"msg": "files"
 	}
